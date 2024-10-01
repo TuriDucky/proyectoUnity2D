@@ -1041,11 +1041,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xSpeed: 1
-  ySpeed: 10
+  ySpeed: 13
   xAcceleration: 0.5
   xSpeedCap: 10
   xSpeedCapAirborn: 7
+  jumptime: 12
   jumptimer: 0
+  isJumping: 0
 --- !u!50 &1365176065
 Rigidbody2D:
   serializedVersion: 4
