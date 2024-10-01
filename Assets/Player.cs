@@ -65,16 +65,19 @@ public class Player : MonoBehaviour
         else{
             if (GroundCheck.isGrounded){
                 if (xSpeed != 0){
-                if (xSpeed > 0){
-                    xSpeed = xSpeed - xAcceleration;
-                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                    if (xSpeed > 0){
+                        xSpeed = xSpeed - xAcceleration;
+                        rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                    }
+                    else{
+                        xSpeed = xSpeed + xAcceleration;
+                        rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                    }
                 }
-                else{
-                    xSpeed = xSpeed + xAcceleration;
-                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
-                }
-
             }
+
+            if (rb2D.velocity.x == 0){
+                xSpeed = 0;
             }
             
             
