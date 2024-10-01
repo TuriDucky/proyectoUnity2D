@@ -7,9 +7,13 @@ public class Player : MonoBehaviour
     public float xSpeed;
     public float ySpeed;
     public float xAcceleration;
-    public float yAcceleration;
     public float xSpeedCap;
     public float xSpeedCapAirborn;
+
+    public float jumptime;
+    public float jumptimer;
+    public bool isJumping;
+
     Rigidbody2D rb2D;
     
     // Start is called before the first frame update
@@ -21,6 +25,13 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+
+        if (rb2D.velocity.x == 0){
+            xSpeed = 0;
+        } 
+        
+
+        
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
             if (GroundCheck.isGrounded){
                 xSpeed = xSpeed - xAcceleration * 2;
@@ -32,15 +43,15 @@ public class Player : MonoBehaviour
                 if (xSpeed >= -xSpeedCapAirborn){
                     xSpeed = xSpeed - xAcceleration;
 
-                if (xSpeed < -xSpeedCapAirborn){
-                xSpeed = -xSpeedCapAirborn;
-                }
+                    if (xSpeed < -xSpeedCapAirborn){
+                        xSpeed = -xSpeedCapAirborn;
+                    }
                 
+                }
             }
-            }
-            
             rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
         }
+
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
             if (GroundCheck.isGrounded){
                 xSpeed = xSpeed + xAcceleration * 2;
@@ -54,12 +65,11 @@ public class Player : MonoBehaviour
                     xSpeed = xSpeed + xAcceleration;
 
                     if (xSpeed > xSpeedCapAirborn){
-                    xSpeed = xSpeedCapAirborn;
+                        xSpeed = xSpeedCapAirborn;
                     }
             
                 }
             }
-            
             rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
         }
         else{
@@ -74,40 +84,31 @@ public class Player : MonoBehaviour
                         rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
                     }
                 }
-            }
-
-            if (rb2D.velocity.x == 0){
-                xSpeed = 0;
-            }
-            
-            
-            
-        }
-
-        if (rb2D.velocity.x == 0){
-            xSpeed = 0;
-        } 
-        if (rb2D.velocity.y == 0){
-            ySpeed = 0;
+            }  
         }
 
         if (GroundCheck.isGrounded){
-            
             if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
-                ySpeed = 15;
+                jumptimer = jumptime;
+                isJumping = true;
                 rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
             }
             
         }
 
-        if (GroundCheck.isGrounded == false){
-            ySpeed = ySpeed - yAcceleration;
-            rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
+        if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
+            if (jumptimer != 0){
+                rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
+                jumptimer = jumptimer - 1;
+            }
+            
         }
-        
-
-        
     }
 
-    
+    void Update(){
+        if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.UpArrow)){
+            jumptimer = 0;
+            isJumping = false;
+        }
+    }
 }
