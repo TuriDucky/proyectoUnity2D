@@ -1,28 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
 {
-    static public BoxCollider2D bc2D;
-    static public bool grounded;
-    void Start()
-    {
-        bc2D = GetComponent<BoxCollider2D>();
-        grounded = false;
+    static public bool isGrounded;
+
+    
+
+    private void OnTriggerEnter2D(Collider2D coll){
+        isGrounded = true;
+        Debug.Log("Entrado");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    void OnCollisionEnter2D(BoxCollider2D bc2D){
-        grounded = true;
-    }
-
-    void OnCollisionExit2D(BoxCollider2D bc2D){
-        grounded = false;
+    private void OnTriggerExit2D(Collider2D coll){
+        isGrounded = false;
+        Debug.Log("Salido");
     }
 }
