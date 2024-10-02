@@ -10,12 +10,18 @@ public class GroundCheck : MonoBehaviour
     
 
     private void OnTriggerEnter2D(Collider2D coll){
-        isGrounded = true;
-        Debug.Log("Entrado");
+        if(coll.tag == "terrain"){
+            isGrounded = true;
+            Debug.Log("Entrado");
+        }
+        
     }
 
     private void OnTriggerExit2D(Collider2D coll){
-        isGrounded = false;
-        Debug.Log("Salido");
+        if(coll.tag == "terrain"){
+            isGrounded = false;
+            Debug.Log("Salido");
+        }
+        
     }
 }

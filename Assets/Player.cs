@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -24,6 +25,11 @@ public class Player : MonoBehaviour
     public int dashCount;
     public int dashCounter;
 
+    public float slashDelay;
+    public float slashDelayCounter;
+
+    public GameObject SlashPrefab;
+
     Rigidbody2D rb2D;
     SpriteRenderer sr;
     
@@ -36,6 +42,10 @@ public class Player : MonoBehaviour
     }
 
     void Update(){
+        if(slashDelayCounter > 0){
+            slashDelayCounter --;
+        }
+
         if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.UpArrow)){
             jumptimer = 0;
             isJumping = false;
@@ -55,15 +65,24 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)){
                 lastKeyPressed = 's';
             }
+
+            
         }
 
         if (GroundCheck.isGrounded){
             dashCounter = dashCount;
         }
-        if (Input.GetMouseButtonDown(0) && dashCounter > 0){
+        if (Input.GetMouseButtonDown(1) && dashCounter > 0){
+            slashDelayCounter = slashDelay - 10;
+            slash();
             isDashing = true;
             dashTimer = dashTime;
             dashCounter --;
+        }
+
+        if (Input.GetMouseButtonDown(0) && slashDelayCounter <= 0){
+            slashDelayCounter = slashDelay;
+            slash();
         }
         
     }
@@ -76,11 +95,11 @@ public class Player : MonoBehaviour
         } 
 
         
-        
-        
 
         if (isDashing){
+            
             xSpeed = 20;
+            
             if (lastKeyPressed == 'a'){
                 xSpeed = -xSpeed;
                 rb2D.velocity = new Vector2(xSpeed, 0);
@@ -124,55 +143,54 @@ public class Player : MonoBehaviour
                         if (xSpeed < -xSpeedCapAirborn){
                             xSpeed = -xSpeedCapAirborn;
                         }
-                    
                     }
                 }
                 rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
-        }
+            }
 
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
-            
-            facingRight = true;
-            sr.flipX = true;
-            if (GroundCheck.isGrounded){
-                xSpeed = xSpeed + xAcceleration * 3;
-                if (xSpeed > xSpeedCap){
-                    xSpeed = xSpeedCap;
+            else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
+                
+                facingRight = true;
+                sr.flipX = true;
+                
+                if (GroundCheck.isGrounded){
+                    xSpeed = xSpeed + xAcceleration * 3;
+                    if (xSpeed > xSpeedCap){
+                        xSpeed = xSpeedCap;
+                    }
                 }
+                
+                else{
+                    if (xSpeed <= xSpeedCapAirborn){
+                        xSpeed = xSpeed + xAcceleration;
+
+                        if (xSpeed > xSpeedCapAirborn){
+                            xSpeed = xSpeedCapAirborn;
+                        }
+                    }
+                }
+                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
             }
             
             else{
-                if (xSpeed <= xSpeedCapAirborn){
-                    xSpeed = xSpeed + xAcceleration;
-
-                    if (xSpeed > xSpeedCapAirborn){
-                        xSpeed = xSpeedCapAirborn;
+                if (GroundCheck.isGrounded){
+                    if (xSpeed != 0){
+                        if (xSpeed > 0){
+                            xSpeed = xSpeed - xAcceleration * 5;
+                            rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                        }
+                        else{
+                            xSpeed = xSpeed + xAcceleration;
+                            rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                        }
                     }
-            
-                }
+                }  
             }
-            rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
-        }
-        else{
-            if (GroundCheck.isGrounded){
-                if (xSpeed != 0){
-                    if (xSpeed > 0){
-                        xSpeed = xSpeed - xAcceleration;
-                        rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
-                    }
-                    else{
-                        xSpeed = xSpeed + xAcceleration;
-                        rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
-                    }
-                }
-            }  
-        }
         }
         
 
         if (GroundCheck.isGrounded){
             if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
-                
                 jumptimer = jumptime;
                 isJumping = true;
                 rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
@@ -184,10 +202,22 @@ public class Player : MonoBehaviour
             if (jumptimer != 0){
                 rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
                 jumptimer = jumptimer - 1;
-            }
-            
+            } 
         }
     }
 
-    
+    void slash(){
+        
+
+        GameObject slash = Instantiate(SlashPrefab, transform.position, Quaternion.identity);
+            if (lastKeyPressed == 'a'){
+                slash.transform.Rotate(0,0,-90);
+            }
+            if(lastKeyPressed == 'd'){
+                slash.transform.Rotate(0,0,90);
+            }
+            if (lastKeyPressed == 'w'){
+                slash.transform.Rotate(0,0,-180);
+            }
+    }
 }
