@@ -102,7 +102,6 @@ public class Player : MonoBehaviour
             dashTimer = dashTimer - 1;
             if (dashTimer == 0){
                 isDashing = false;
-                
             }
         }
         
