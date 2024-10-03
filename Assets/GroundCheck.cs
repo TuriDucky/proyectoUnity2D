@@ -7,8 +7,6 @@ public class GroundCheck : MonoBehaviour
 {
     static public bool isGrounded;
 
-    
-
     private void OnTriggerEnter2D(Collider2D coll){
         if(coll.tag == "terrain"){
             isGrounded = true;
@@ -24,4 +22,6 @@ public class GroundCheck : MonoBehaviour
         }
         
     }
+
+    
 }
