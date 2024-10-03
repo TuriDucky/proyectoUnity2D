@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -27,6 +29,10 @@ public class Player : MonoBehaviour
 
     public float slashDelay;
     public float slashDelayCounter;
+    public bool isHit;
+
+    public float knockbackTimeCounter;
+    public float knockbackTime;
 
     public GameObject SlashPrefab;
 
@@ -39,6 +45,7 @@ public class Player : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         facingRight = true;
+        isHit = false;
     }
 
     void Update(){
@@ -84,11 +91,20 @@ public class Player : MonoBehaviour
             slashDelayCounter = slashDelay;
             slash();
         }
+
+        
         
     }
 
     void FixedUpdate()
     {
+        if (isHit){
+            knockbackTimeCounter --;
+            if (knockbackTimeCounter == 0){
+                isHit = false;
+                rb2D.velocity = new Vector2(0, rb2D.velocity.y);
+            }
+        }
 
         if (rb2D.velocity.x == 0){
             xSpeed = 0;
@@ -124,7 +140,7 @@ public class Player : MonoBehaviour
             }
         }
         
-        if (!isDashing){
+        if (!isDashing && !isHit){
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
                 
                 facingRight = false;
@@ -207,9 +223,8 @@ public class Player : MonoBehaviour
     }
 
     void slash(){
-        
-
         GameObject slash = Instantiate(SlashPrefab, transform.position, Quaternion.identity);
+        slash.transform.parent = gameObject.transform;
             if (lastKeyPressed == 'a'){
                 slash.transform.Rotate(0,0,-90);
             }
@@ -219,5 +234,51 @@ public class Player : MonoBehaviour
             if (lastKeyPressed == 'w'){
                 slash.transform.Rotate(0,0,-180);
             }
+            
+    }
+
+    public void hitEnemy(){
+        if (lastKeyPressed == 's'){
+            rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
+        }
+    }
+
+    public void bubbleBlast(Vector3 bubblePos){
+        Vector3 playerPos = transform.position;
+
+        float blastSpeedX = bubblePos.x - playerPos.x;
+        float blastSpeedY = bubblePos.y - playerPos.y;
+        
+        //Vector2 vector = new Vector2(xSpeed, -blastSpeedY * 15);
+
+        
+        float vectorLenght = 20;
+
+        float currentLenght = Mathf.Sqrt((blastSpeedX * blastSpeedX) + (blastSpeedY * blastSpeedY));
+
+        float normalizedX = blastSpeedX/currentLenght;
+        float normalizedY = blastSpeedY/currentLenght;
+
+        float newX = -normalizedX * vectorLenght;
+        float newY = -normalizedY * vectorLenght * 2;
+
+        xSpeed = Mathf.Round(newX);
+        rb2D.velocity = new Vector2(newX, newY);
+
+    }
+
+    void OnCollisionEnter2D(Collision2D coll){
+        if (coll.collider.tag == "Enemy"){
+            isHit = true;
+            knockbackTimeCounter = knockbackTime;
+            var direction = transform.InverseTransformPoint (coll.transform.position); 
+            
+            if (direction.x > 0){
+                rb2D.velocity = new Vector2 (-3 , rb2D.velocity.y);
+            }
+            if (direction.x < 0){
+                rb2D.velocity = new Vector2 (3 , rb2D.velocity.y);
+            }
+        }
     }
 }

@@ -20,11 +20,17 @@ public class Slash : MonoBehaviour
         if (lifeCounter <= 0){
             Destroy(gameObject);
         }
+        
     }
 
     void OnTriggerEnter2D(Collider2D collider2D){
+        if (collider2D.tag == "Bubble"){
+            transform.parent.GetComponent<Player>().bubbleBlast(collider2D.transform.position);
+        }
         if (collider2D.tag == "Enemy"){
             collider2D.gameObject.GetComponent<Enemy>().Death();
+            transform.parent.GetComponent<Player>().hitEnemy();
         }
+        
     }
 }

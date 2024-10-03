@@ -12,6 +12,8 @@ public class Enemy : MonoBehaviour
     public bool isMoving;
     public float deathCounter;
     public bool isDying;
+    private float deathDirection;
+    public bool isVisible;
 
     Rigidbody2D rb2D;
     BoxCollider2D bc2D;
@@ -40,7 +42,9 @@ public class Enemy : MonoBehaviour
         counter --;
         
         if (isDying){
-            deathCounter --;
+            if (!isVisible){
+                deathCounter --;
+            }
             if (deathCounter == 0){
                 Destroy(gameObject);
             }
@@ -48,18 +52,26 @@ public class Enemy : MonoBehaviour
     }
 
     void FixedUpdate(){
-        if (isMoving){
-            if (direction == 1){
-                rb2D.velocity = new Vector2(3, rb2D.velocity.y);
+        if(!isDying){
+            if (isMoving){
+                if (direction == 1){
+                    rb2D.velocity = new Vector2(3, rb2D.velocity.y);
+                }
+                if (direction == 0){
+                    rb2D.velocity = new Vector2(-3, rb2D.velocity.y);
+                }
             }
-            if (direction == 0){
-                rb2D.velocity = new Vector2(-3, rb2D.velocity.y);
-            }
-        }
 
-        if (!isMoving){
-            rb2D.velocity = new Vector2 (0, rb2D.velocity.y);
+            if (!isMoving){
+                rb2D.velocity = new Vector2 (0, rb2D.velocity.y);
+            }
         }
+        else{
+            rb2D.velocity = new Vector2(deathDirection, rb2D.velocity.y);
+        }
+            
+
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision2D){
@@ -77,9 +89,18 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     public void Death(){
-        rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
+        deathDirection = Random.Range(-4, 4);
+        rb2D.velocity = new Vector2(deathDirection, 20);
         bc2D.isTrigger = true;
         isDying = true;
+    }
+
+    void OnBecameVisible(){
+        isVisible = true;
+    }
+    void OnBecameInvisible(){
+        isVisible = false;
     }
 }

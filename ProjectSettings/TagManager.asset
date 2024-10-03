@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - Attack
   - Enemy
+  - Bubble
   layers:
   - Default
   - TransparentFX
