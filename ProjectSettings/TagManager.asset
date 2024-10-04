@@ -9,6 +9,7 @@ TagManager:
   - Attack
   - Enemy
   - Bubble
+  - DashBubble
   layers:
   - Default
   - TransparentFX

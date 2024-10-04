@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
     public float dashTimer;
     public int dashCount;
     public int dashCounter;
+    public int dashDelay;
+    public int dashDelayCounter;
 
     public float slashDelay;
     public float slashDelayCounter;
@@ -33,6 +35,7 @@ public class Player : MonoBehaviour
 
     public float knockbackTimeCounter;
     public float knockbackTime;
+    public int comboRebote;
 
     public GameObject SlashPrefab;
 
@@ -79,7 +82,8 @@ public class Player : MonoBehaviour
         if (GroundCheck.isGrounded){
             dashCounter = dashCount;
         }
-        if (Input.GetMouseButtonDown(1) && dashCounter > 0){
+        if (Input.GetMouseButtonDown(1) && dashCounter > 0 && dashDelayCounter <= 0){
+            dashDelayCounter = dashDelay;
             slashDelayCounter = slashDelay - 10;
             slash();
             isDashing = true;
@@ -92,7 +96,9 @@ public class Player : MonoBehaviour
             slash();
         }
 
-        
+        if (dashDelayCounter > 0){
+            dashDelayCounter --;
+        }
         
     }
 
@@ -237,13 +243,18 @@ public class Player : MonoBehaviour
             
     }
 
-    public void hitEnemy(){
-        if (lastKeyPressed == 's'){
+    public void hitEnemy(bool enemyIsDying){
+        if (lastKeyPressed == 's' && !enemyIsDying){
             rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
+        }
+        if (enemyIsDying){
+            comboRebote ++;
         }
     }
 
-    public void bubbleBlast(Vector3 bubblePos){
+    public void bubbleBlast(Vector3 bubblePos, int bubbleType){
+        isDashing = false;
+        dashCounter = 1;
         Vector3 playerPos = transform.position;
 
         float blastSpeedX = bubblePos.x - playerPos.x;
@@ -251,7 +262,6 @@ public class Player : MonoBehaviour
         
         //Vector2 vector = new Vector2(xSpeed, -blastSpeedY * 15);
 
-        
         float vectorLenght = 20;
 
         float currentLenght = Mathf.Sqrt((blastSpeedX * blastSpeedX) + (blastSpeedY * blastSpeedY));
@@ -259,8 +269,25 @@ public class Player : MonoBehaviour
         float normalizedX = blastSpeedX/currentLenght;
         float normalizedY = blastSpeedY/currentLenght;
 
-        float newX = -normalizedX * vectorLenght;
-        float newY = -normalizedY * vectorLenght * 2;
+        float newX = normalizedX * vectorLenght;
+        float newY = normalizedY * vectorLenght;
+
+        if (bubbleType == 0){
+            newX = -newX;
+            newY = -newY;
+        }
+        if (bubbleType == 1){
+            newX = newX * 2;
+            newY = newY * 2;
+        }
+
+        if (newX < 2 && newX > -2){
+            newX = 0;
+        }
+        if (newY < 2 && newY > -2){
+            newY = 0;
+        }
+        
 
         xSpeed = Mathf.Round(newX);
         rb2D.velocity = new Vector2(newX, newY);
