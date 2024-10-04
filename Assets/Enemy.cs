@@ -53,17 +53,31 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate(){
         if(!isDying){
-            if (isMoving){
-                if (direction == 1){
-                    rb2D.velocity = new Vector2(3, rb2D.velocity.y);
+            if (!EnemyPatroll.hasDetectedPlayer){
+                if (isMoving){
+                    if (direction == 1){
+                        rb2D.velocity = new Vector2(3, rb2D.velocity.y);
+                    }
+                    if (direction == 0){
+                        rb2D.velocity = new Vector2(-3, rb2D.velocity.y);
+                    }
                 }
-                if (direction == 0){
-                    rb2D.velocity = new Vector2(-3, rb2D.velocity.y);
+
+                if (!isMoving){
+                    rb2D.velocity = new Vector2 (0, rb2D.velocity.y);
                 }
             }
-
-            if (!isMoving){
-                rb2D.velocity = new Vector2 (0, rb2D.velocity.y);
+            else{
+                counter = 1;
+                isMoving = true;
+                var direction = transform.InverseTransformPoint (EnemyPatroll.coll.transform.position); 
+            
+                if (direction.x > 0){
+                    rb2D.velocity = new Vector2 (5 , rb2D.velocity.y);
+                }
+                if (direction.x < 0){
+                    rb2D.velocity = new Vector2 (-5 , rb2D.velocity.y);
+                }
             }
         }
         else{

@@ -244,7 +244,7 @@ public class Player : MonoBehaviour
     }
 
     public void hitEnemy(bool enemyIsDying){
-        if (lastKeyPressed == 's' && !enemyIsDying){
+        if (lastKeyPressed == 's' && !enemyIsDying && !GroundCheck.isGrounded){
             rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
         }
         if (enemyIsDying){
