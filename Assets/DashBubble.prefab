@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4683555037624913814}
   - component: {fileID: 8682133950842525173}
   - component: {fileID: 3077426662679756417}
+  - component: {fileID: 7329614345892218723}
   m_Layer: 0
   m_Name: DashBubble
   m_TagString: DashBubble
@@ -120,3 +121,16 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &7329614345892218723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7087723699414122128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6aaf1ea23c73bd4ba96ab622c766b86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vectorLenght: 0
