@@ -17,7 +17,7 @@ public class Bubble : MonoBehaviour
     public void bubbleBlast(Vector3 bubblePos){
         
         player.GetComponent<Player>().isDashing = false;
-        player.GetComponent<Player>().dashCounter = 1;
+        player.GetComponent<Player>().dashCountCounter = 1;
         Vector3 playerPos = player.transform.position;
 
         float blastSpeedX = bubblePos.x - playerPos.x;

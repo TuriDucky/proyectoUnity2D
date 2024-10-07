@@ -8,43 +8,52 @@ using UnityEngine.UIElements;
 public class Player : MonoBehaviour
 {
     public float xSpeed;
-    public float ySpeed;
-    public float xAcceleration;
-    public float xSpeedCap;
-    public float xSpeedCapAirborn;
-    public bool facingRight;
+    public float ySpeed; //Velocidad en el eje Y. Es el impulso que recibe al pulsar el boton de salto
+    public float xAcceleration; //Aceleracion en el eje X. El tiempo que cuesta alcanzar la velocidad maxima y detenerse.
+    public float xSpeedCap; //La velocidad maxima que puede alcanzar el personaje mediante los botones de movimiento
+    public float xSpeedCapAirborn; //La velocidad maxima que puede alcanzar el personaje mediante los botones de movimiento en el aire
+    public bool facingRight; //true si el ultimo input fue el de ir a la derecha, false si lo mismo pero izquierda
 
-    public float jumptime;
-    public float jumptimer;
-    public bool isJumping;
-
-    public char lastKeyPressed;
+    public float jumptime; // El tiempo en el que el jugador puede seguir apretando el boton de salto para saltar mas alto
+    float jumptimeCounter;
+    public bool isJumping; //true si ha usado botones para saltar, false sino
 
 
-    public bool isDashing;
-    public float dashTime;
-    public float dashTimer;
-    public int dashCount;
-    public int dashCounter;
-    public int dashDelay;
-    public int dashDelayCounter;
 
-    public float slashDelay;
-    public float slashDelayCounter;
-    public bool isHit;
+    public char lastKeyPressed; // Ultima tecla pulsada. Solo tiene en cuenta las teclas de direccion
 
-    public float knockbackTimeCounter;
-    public float knockbackTime;
+
+
+    public bool isDashing; //Es true cuando se esta dahseando, false cuando no
+    public float dashTime; //Tiempo que dura el dash
+    float dashTimeCounter;
+
+    public float dashCount; //Numero de dashes que puede hacer en el aire
+    public float dashCountCounter;
+
+    public float dashDelay; //Tiempo de espera entre dos dashes
+    public float dashDelayCounter;
+
+
+
+    public float slashDelay; //Tiempo de espera entre espadazos
+    float slashDelayCounter;
+    public bool isHit; //Cuando un ememigo lo golpea, sera true
+
+
+    public float knockbackTime; //Tiempo de knockback
+    float knockbackTimeCounter;
+    
     public int comboRebote;
 
-    public Vector3 lastCheckpoint;
+    public Vector3 lastCheckpoint; //Las cordenadas del ultimo checkpoint visitado
 
-    public GameObject SlashPrefab;
+    public GameObject SlashPrefab; //El ataque del jugador
 
     public Rigidbody2D rb2D;
     SpriteRenderer sr;
     
-    // Start is called before the first frame update
+    // Inicializa varios valores
     void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
@@ -55,17 +64,40 @@ public class Player : MonoBehaviour
     }
 
     void Update(){
+        //Temporizador para el tiempo entre ataques
         if(slashDelayCounter > 0){
-            slashDelayCounter --;
+            slashDelayCounter -= Time.deltaTime;
+        }
+        else{
+            slashDelayCounter = 0;
         }
 
+        //Temporizador para el delay entre dashes
+        if (dashDelayCounter > 0){
+            dashDelayCounter -= Time.deltaTime;
+        }
+        else{
+            dashDelayCounter = 0;
+        }
+
+        //Detecta el imput del boton de aqtaque y llama al metodo de ataque.
+        //Tambien inicia el temporizador de tiempo entre ataques
+        if (Input.GetMouseButtonDown(0) && slashDelayCounter <= 0){
+            slashDelayCounter = slashDelay;
+            slash();
+        }
+
+
+        //Detecta si se ha dejado de pulsar el boton de salto para resetear el
+        //temporizador de saltos y settear isJumping = false
         if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.UpArrow)){
-            jumptimer = 0;
+            jumptimeCounter = 0f;
             isJumping = false;
         }
 
-        if (!isDashing){
 
+        //Detecta e ultimo boton de direccion que el jugador haya pulsado (siempre que no este dasheando)
+        if (!isDashing){
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
                 lastKeyPressed = 'a';
             }
@@ -78,47 +110,52 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)){
                 lastKeyPressed = 's';
             }
-
-            
         }
 
+        //coumprueba si el jugador esta tocando el suelo para resetear el valor
+        //de dashes que el jugador puede hacer en el aire.
         if (GroundCheck.isGrounded){
-            dashCounter = dashCount;
+            dashCountCounter = dashCount;
         }
-        if (Input.GetMouseButtonDown(1) && dashCounter > 0 && dashDelayCounter <= 0){
+
+
+        //Detecta si el usuario ha presionado el boton de dash, y comprueba si
+        //hay disponibles dahses en el aire y que haya pasado el delay entre
+        //dashes. Si todo devuelve true, llama al metodo slash(), y activa el
+        //temporizador entre dashes y el temporizador de duracion del dash.
+        if (Input.GetMouseButtonDown(1) && dashCountCounter > 0 && dashDelayCounter <= 0){
             dashDelayCounter = dashDelay;
-            slashDelayCounter = slashDelay - 10;
+            slashDelayCounter = slashDelay / 2;
             slash();
             isDashing = true;
-            dashTimer = dashTime;
-            dashCounter --;
+            dashTimeCounter = dashTime;
+            dashCountCounter --;
         }
-
-        if (Input.GetMouseButtonDown(0) && slashDelayCounter <= 0){
-            slashDelayCounter = slashDelay;
-            slash();
-        }
-
-        if (dashDelayCounter > 0){
-            dashDelayCounter --;
-        }
-        
     }
 
     void FixedUpdate()
     {
         if (isHit){
-            knockbackTimeCounter --;
-            if (knockbackTimeCounter == 0){
+            knockbackTimeCounter -= Time.deltaTime;
+            if (knockbackTimeCounter <= 0){
+                knockbackTimeCounter = 0;
                 isHit = false;
                 rb2D.velocity = new Vector2(0, rb2D.velocity.y);
             }
         }
 
-        if (rb2D.velocity.x == 0){
+        //En caso de que la velocidad del rigidbody es muy cercana al zero, setea
+        //tanto la velocidad tanto SpeedX a zero
+        if (rb2D.velocity.x > -0.5 && rb2D.velocity.x < 0.5){
+            rb2D.velocity = new Vector2(0, rb2D.velocity.y);
             xSpeed = 0;
         } 
 
+        //Si el personaje esta dasheando, dependiendo de cual fue el ultimo input
+        //direccional antes del dash, aplica velocidad hacia esa direccion. En caso
+        //de que el dash sea hacia arriba, aplica mas fuerza para que se eleve mas.
+
+        //Aqui hayq ue solucionar el error de los dash jumps
         if (isDashing){
             
             xSpeed = 20;
@@ -136,23 +173,30 @@ public class Player : MonoBehaviour
                 rb2D.velocity = new Vector2(0, dashup);
             }
             if (lastKeyPressed == 's'){
-                float dashup = -xSpeed;
+                float dashdown = -xSpeed;
                 xSpeed = 0;
-                rb2D.velocity = new Vector2(0, dashup);
+                rb2D.velocity = new Vector2(0, dashdown);
             }
             
-            dashTimer = dashTimer - 1;
-            if (dashTimer == 0){
+            dashTimeCounter -= Time.deltaTime; //Temporizador del tiempo en estado de dash
+
+            //Cuando termine el temporizador, termina el estado de dash y reinicia el temporizador
+            if (dashTimeCounter <= 0){
                 isDashing = false;
+                dashTimeCounter = 0;
             }
         }
         
+        //Solo se puede hacer mover el personaje hacia los lados si no esta dasheando o no esta ene stado de hit
         if (!isDashing && !isHit){
+
+            //Izquierda
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
                 
                 facingRight = false;
                 sr.flipX = false;
 
+                //Cuando este en el suelo aplic
                 if (GroundCheck.isGrounded){
                     xSpeed = xSpeed - xAcceleration * 3;
                     if (xSpeed < -xSpeedCap){
@@ -171,6 +215,7 @@ public class Player : MonoBehaviour
                 rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
             }
 
+            //Derecha
             else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
                 
                 facingRight = true;
@@ -200,11 +245,22 @@ public class Player : MonoBehaviour
                     if (xSpeed != 0){
                         if (xSpeed > 0){
                             xSpeed = xSpeed - xAcceleration * 5;
-                            rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                            if (xSpeed < 0){
+                                rb2D.velocity = new Vector2(0, rb2D.velocity.y);
+                            }
+                            else{
+                                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                            }
+                            
                         }
                         else{
-                            xSpeed = xSpeed + xAcceleration;
-                            rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                            xSpeed = xSpeed + xAcceleration * 5;
+                            if (xSpeed > 0){
+                                rb2D.velocity = new Vector2(0, rb2D.velocity.y);
+                            }
+                            else{
+                                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                            }
                         }
                     }
                 }  
@@ -214,20 +270,28 @@ public class Player : MonoBehaviour
 
         if (GroundCheck.isGrounded && lastKeyPressed != 's'){
             if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
-                jumptimer = jumptime;
+                jumptimeCounter = jumptime;
                 isJumping = true;
                 rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
-                rb2D.AddForce(transform.up * ySpeed);
+                
             }
         }
 
         if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
-            if (jumptimer != 0){
+            if (jumptimeCounter > 0){
                 rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
-                jumptimer = jumptimer - 1;
-            } 
+                jumptimeCounter -= Time.deltaTime;
+            }
+            else{
+                jumptimeCounter = 0;
+            }
         }
     }
+
+    /*
+        A partir de aqui hay metodos dedicados del personaje.
+    */
+
 
     void slash(){
         GameObject slash = Instantiate(SlashPrefab, transform.position, Quaternion.identity);
