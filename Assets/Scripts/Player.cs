@@ -37,6 +37,8 @@ public class Player : MonoBehaviour
     public float knockbackTime;
     public int comboRebote;
 
+    public Vector3 lastCheckpoint;
+
     public GameObject SlashPrefab;
 
     public Rigidbody2D rb2D;
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         facingRight = true;
         isHit = false;
+        lastCheckpoint = transform.position;
     }
 
     void Update(){
@@ -248,6 +251,16 @@ public class Player : MonoBehaviour
         if (enemyIsDying){
             comboRebote ++;
         }
+    }
+
+    public void setCheckpoint(Vector3 newCheckpoint){
+        lastCheckpoint = newCheckpoint;
+    }
+
+    public void Respawn(){
+        rb2D.velocity = new Vector2(0,0);
+        xSpeed = 0;
+        transform.position = lastCheckpoint;
     }
 
 

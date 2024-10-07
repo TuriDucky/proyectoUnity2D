@@ -17,7 +17,7 @@ public class semisolid : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.Space)){
             effector2D.rotationalOffset = 180f;
-            contador = 50;
+            contador = 500;
         }
 
         if (contador > 0){

@@ -11,6 +11,8 @@ TagManager:
   - Bubble
   - DashBubble
   - Breakable
+  - Checkpoint
+  - DeathCollision
   layers:
   - Default
   - TransparentFX
