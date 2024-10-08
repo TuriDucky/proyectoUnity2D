@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -46,6 +47,10 @@ public class Player : MonoBehaviour
     
     public int comboRebote;
 
+    public bool isRespawning;
+    public float respawnTime;
+    public float respawnTimeCounter;
+
     public Vector3 lastCheckpoint; //Las cordenadas del ultimo checkpoint visitado
 
     public GameObject SlashPrefab; //El ataque del jugador
@@ -64,6 +69,15 @@ public class Player : MonoBehaviour
     }
 
     void Update(){
+
+        if (respawnTimeCounter > 0){
+            respawnTimeCounter -= Time.deltaTime;
+            
+            if (respawnTimeCounter <= 0){
+                respawnTimeCounter = 0;
+            }
+        }
+
         //Temporizador para el tiempo entre ataques
         if(slashDelayCounter > 0){
             slashDelayCounter -= Time.deltaTime;
@@ -324,6 +338,7 @@ public class Player : MonoBehaviour
     public void Respawn(){
         rb2D.velocity = new Vector2(0,0);
         xSpeed = 0;
+        respawnTimeCounter = respawnTime;
         transform.position = lastCheckpoint;
     }
 
