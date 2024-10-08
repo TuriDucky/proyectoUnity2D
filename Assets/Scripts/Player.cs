@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     public float jumptime; // El tiempo en el que el jugador puede seguir apretando el boton de salto para saltar mas alto
     float jumptimeCounter;
     public bool isJumping; //true si ha usado botones para saltar, false sino
+    public bool canJump; //true si puede saltar, false sino
 
 
 
@@ -26,6 +27,8 @@ public class Player : MonoBehaviour
 
 
     public bool isDashing; //Es true cuando se esta dahseando, false cuando no
+
+    public bool dashStartedGround; //true si la accion de dash comienza en el suelo
     public float dashTime; //Tiempo que dura el dash
     float dashTimeCounter;
 
@@ -142,8 +145,22 @@ public class Player : MonoBehaviour
             slashDelayCounter = slashDelay / 2;
             slash();
             isDashing = true;
+            if (GroundCheck.isGrounded){
+                dashStartedGround = true;
+            }
+            else{
+                dashStartedGround = false;
+            }
             dashTimeCounter = dashTime;
             dashCountCounter --;
+        }
+
+
+        if (GroundCheck.touchingSemisolid && Input.GetKey(KeyCode.S)){
+            canJump = false;
+        }
+        else{
+            canJump = true;
         }
     }
 
@@ -176,10 +193,21 @@ public class Player : MonoBehaviour
             
             if (lastKeyPressed == 'a'){
                 xSpeed = -xSpeed;
-                rb2D.velocity = new Vector2(xSpeed, 0);
+                if(dashStartedGround){
+                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                }
+                else{
+                    rb2D.velocity = new Vector2(xSpeed, 0);
+                }
+                
             }
             if(lastKeyPressed == 'd'){
-                rb2D.velocity = new Vector2(xSpeed, 0);
+                if(dashStartedGround){
+                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                }
+                else{
+                    rb2D.velocity = new Vector2(xSpeed, 0);
+                }
             }
             if (lastKeyPressed == 'w'){
                 float dashup = (xSpeed / 4) * 3;
@@ -281,15 +309,18 @@ public class Player : MonoBehaviour
             }
         }
         
-
-        if (GroundCheck.isGrounded && lastKeyPressed != 's'){
-            if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
-                jumptimeCounter = jumptime;
-                isJumping = true;
-                rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
-                
+        if (canJump){
+            if (GroundCheck.isGrounded || (isDashing && dashStartedGround)){
+                if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
+                    jumptimeCounter = jumptime;
+                    isJumping = true;
+                    rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
+                    
+                }
             }
         }
+            
+        
 
         if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
             if (jumptimeCounter > 0){

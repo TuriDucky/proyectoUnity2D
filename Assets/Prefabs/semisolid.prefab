@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4841804056311651421}
   m_Layer: 0
   m_Name: semisolid
-  m_TagString: terrain
+  m_TagString: Semisolid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,3 +110,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d698eacc5a9804d41916fafc9c53d1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  contador: 0

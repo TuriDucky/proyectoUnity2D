@@ -26,9 +26,12 @@ public class SecretRooms : MonoBehaviour
     void Update()
     {
         if (isInside && tilemap.color.a > 0){
-            elColor.a -= Time.deltaTime * 2;
-            tilemap.color = elColor;
-        }      
+            elColor.a -= Time.deltaTime * 3;
+        }  
+        if (!isInside && tilemap.color.a < 1){
+            elColor.a += Time.deltaTime * 3;
+        }
+        tilemap.color = elColor;  
     }
 
     void OnTriggerEnter2D(Collider2D collider2D){
@@ -50,8 +53,6 @@ public class SecretRooms : MonoBehaviour
         if (collider2D.tag == "Player"){
             Debug.Log("salido");
             isInside = false;
-            elColor.a = 1f;
-            tilemap.color = elColor;
         }
     }
 }
