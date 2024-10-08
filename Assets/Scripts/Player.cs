@@ -54,11 +54,14 @@ public class Player : MonoBehaviour
     public float respawnTime;
     public float respawnTimeCounter;
 
+    public bool animationJump;
+
     public Vector3 lastCheckpoint; //Las cordenadas del ultimo checkpoint visitado
 
     public GameObject SlashPrefab; //El ataque del jugador
 
     public Rigidbody2D rb2D;
+    public Animator animator;
     SpriteRenderer sr;
     
     // Inicializa varios valores
@@ -72,6 +75,23 @@ public class Player : MonoBehaviour
     }
 
     void Update(){
+
+        if (!GroundCheck.isGrounded && rb2D.velocity.y > 0){
+            animator.SetBool("isAscending", true);
+            animator.SetBool("isFalling", false);
+            animationJump = true;
+        }
+        if (!GroundCheck.isGrounded && rb2D.velocity.y < 0){
+            animator.SetBool("isAscending", false);
+            animator.SetBool("isFalling", true);
+            animationJump = true;
+        }
+        if (GroundCheck.isGrounded){
+            animator.SetBool("isAscending", false);
+            animator.SetBool("isFalling", false);
+            animationJump = false;
+        }
+
 
         if (respawnTimeCounter > 0){
             respawnTimeCounter -= Time.deltaTime;
@@ -166,14 +186,6 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isHit){
-            knockbackTimeCounter -= Time.deltaTime;
-            if (knockbackTimeCounter <= 0){
-                knockbackTimeCounter = 0;
-                isHit = false;
-                rb2D.velocity = new Vector2(0, rb2D.velocity.y);
-            }
-        }
 
         //En caso de que la velocidad del rigidbody es muy cercana al zero, setea
         //tanto la velocidad tanto SpeedX a zero
@@ -231,15 +243,22 @@ public class Player : MonoBehaviour
         
         //Solo se puede hacer mover el personaje hacia los lados si no esta dasheando o no esta ene stado de hit
         if (!isDashing && !isHit){
-
             //Izquierda
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
                 
                 facingRight = false;
-                sr.flipX = false;
+                sr.flipX = true;
 
                 //Cuando este en el suelo aplic
                 if (GroundCheck.isGrounded){
+                
+                    animator.SetBool("isRunning", false);
+
+                    if (!animationJump){
+                        animator.SetBool("isRunning", true);
+                    }
+                    
+                    
                     xSpeed = xSpeed - xAcceleration * 3;
                     if (xSpeed < -xSpeedCap){
                         xSpeed = -xSpeedCap;
@@ -261,15 +280,22 @@ public class Player : MonoBehaviour
             else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
                 
                 facingRight = true;
-                sr.flipX = true;
+                sr.flipX = false;
                 
                 if (GroundCheck.isGrounded){
+                    
+                    animator.SetBool("isRunning", false);
+                    
+                    if (!animationJump){
+                        animator.SetBool("isRunning", true);
+                    }
+
+
                     xSpeed = xSpeed + xAcceleration * 3;
                     if (xSpeed > xSpeedCap){
                         xSpeed = xSpeedCap;
                     }
                 }
-                
                 else{
                     if (xSpeed <= xSpeedCapAirborn){
                         xSpeed = xSpeed + xAcceleration;
@@ -281,8 +307,8 @@ public class Player : MonoBehaviour
                 }
                 rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
             }
-            
             else{
+                animator.SetBool("isRunning", false);
                 if (GroundCheck.isGrounded){
                     if (xSpeed != 0){
                         if (xSpeed > 0){
@@ -306,7 +332,9 @@ public class Player : MonoBehaviour
                         }
                     }
                 }  
-            }
+            
+    }
+            
         }
         
         if (canJump){
@@ -319,8 +347,6 @@ public class Player : MonoBehaviour
                 }
             }
         }
-            
-        
 
         if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
             if (jumptimeCounter > 0){

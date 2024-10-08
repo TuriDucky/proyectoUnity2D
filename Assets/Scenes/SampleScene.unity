@@ -48111,7 +48111,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -49417,7 +49417,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -51202,6 +51202,7 @@ GameObject:
   - component: {fileID: 1365176064}
   - component: {fileID: 1365176065}
   - component: {fileID: 1365176066}
+  - component: {fileID: 1365176067}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -51250,7 +51251,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -1930788810, guid: 6da73c85446431945a755368918a606d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -51289,7 +51290,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aee1d3a7e80dc04ea7a10b85a6b9cbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSpeed: 1
+  xSpeed: 10
   ySpeed: 15
   xAcceleration: 0.5
   xSpeedCap: 10
@@ -51313,9 +51314,11 @@ MonoBehaviour:
   isRespawning: 0
   respawnTime: 0
   respawnTimeCounter: 0
+  animationJump: 0
   lastCheckpoint: {x: 0, y: 0, z: 0}
   SlashPrefab: {fileID: 5264621392225560220, guid: 7d0288a176d91c44b8a95598a58d85a9, type: 3}
   rb2D: {fileID: 0}
+  animator: {fileID: 1365176067}
 --- !u!50 &1365176065
 Rigidbody2D:
   serializedVersion: 4
@@ -51375,19 +51378,40 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.08978844, y: -0.23628652}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.65029526, y: 0.9054854}
   m_EdgeRadius: 0
+--- !u!95 &1365176067
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365176061}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 583122174b9e5e842b107fcc5728d15d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1382590655
 GameObject:
   m_ObjectHideFlags: 0
@@ -58747,7 +58771,7 @@ Transform:
   m_GameObject: {fileID: 1537258470}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.094, y: -0.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -59142,7 +59166,7 @@ MonoBehaviour:
   m_Follow: {fileID: 1365176063}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 8
+    OrthographicSize: 7
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
