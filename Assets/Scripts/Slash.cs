@@ -7,15 +7,20 @@ public class Slash : MonoBehaviour
 {
     public GameObject player;
     float lifeCounter;
+    public float playerDirection;
+
+    SpriteRenderer sr;
     void Start()
     {
         player = GameObject.Find("Player");
+        sr = GetComponent<SpriteRenderer>();
         lifeCounter = 10;
+        sr.enabled = false;
     }
 
     void FixedUpdate()
     {
-        transform.position = player.transform.position;
+        ajustarPosicion();
         lifeCounter --;
         if (lifeCounter <= 0){
             Destroy(gameObject);
@@ -42,5 +47,28 @@ public class Slash : MonoBehaviour
             Destroy(gameObject);
         }
         
+    }
+
+    void ajustarPosicion(){
+        Vector2 posicion = player.transform.position;
+        
+        if (playerDirection == 1){
+            posicion.y -= 2;
+            transform.position = posicion;
+        }
+        else if(playerDirection == 2){
+            posicion.y += 2;
+            transform.position = posicion;
+        }
+        else if(playerDirection == 3){
+            posicion.x -= 2;
+            transform.position = posicion;
+        }
+        else{
+            posicion.x += 2;
+            transform.position = posicion;
+        }
+        
+        sr.enabled = true;
     }
 }

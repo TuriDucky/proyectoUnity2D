@@ -165,6 +165,7 @@ public class Player : MonoBehaviour
             slashDelayCounter = slashDelay / 2;
             slash();
             isDashing = true;
+            animator.SetBool("isDashing", true);
             if (GroundCheck.isGrounded){
                 dashStartedGround = true;
             }
@@ -237,6 +238,7 @@ public class Player : MonoBehaviour
             //Cuando termine el temporizador, termina el estado de dash y reinicia el temporizador
             if (dashTimeCounter <= 0){
                 isDashing = false;
+                animator.SetBool("isDashing", false);
                 dashTimeCounter = 0;
             }
         }
@@ -368,13 +370,17 @@ public class Player : MonoBehaviour
         GameObject slash = Instantiate(SlashPrefab, transform.position, Quaternion.identity);
         slash.transform.parent = gameObject.transform;
             if (lastKeyPressed == 'a'){
-                slash.transform.Rotate(0,0,-90);
+                slash.transform.Rotate(0,0,180);
+                slash.transform.GetComponent<Slash>().playerDirection = 3;
             }
-            if(lastKeyPressed == 'd'){
-                slash.transform.Rotate(0,0,90);
-            }
+            
             if (lastKeyPressed == 'w'){
-                slash.transform.Rotate(0,0,-180);
+                slash.transform.Rotate(0,0,90);
+                slash.transform.GetComponent<Slash>().playerDirection = 2;
+            }
+            if (lastKeyPressed == 's'){
+                slash.transform.Rotate(0,0,-90);
+                slash.transform.GetComponent<Slash>().playerDirection = 1;
             }
             
     }
