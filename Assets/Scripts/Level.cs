@@ -18,6 +18,9 @@ public class Level : MonoBehaviour
     int decimas;
 
     public Image moneda1;
+    public Image moneda2;
+    public Image moneda3;
+    public Image moneda4;
 
     void Start()
     {
@@ -40,7 +43,15 @@ public class Level : MonoBehaviour
             case 1:
                 moneda1.enabled = false;
                 break;
-
+            case 2:
+                moneda2.enabled = false;
+                break;
+            case 3:
+                moneda3.enabled = false;
+                break;
+            case 4:
+                moneda4.enabled = false;
+                break;
         }
     }
 }

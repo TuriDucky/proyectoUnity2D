@@ -9,5 +9,6 @@ public class DeathBox : MonoBehaviour
             Debug.Log("Muerto");
             collider2D.transform.GetComponent<Player>().Respawn();
         }
+        
     }
 }
