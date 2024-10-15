@@ -21,6 +21,13 @@ public class Level : MonoBehaviour
     public Image moneda2;
     public Image moneda3;
     public Image moneda4;
+    public Image moneda5;
+
+    public Image moneda1Blank;
+    public Image moneda2Blank;
+    public Image moneda3Blank;
+    public Image moneda4Blank;
+    public Image moneda5Blank;
 
     void Start()
     {
@@ -41,16 +48,24 @@ public class Level : MonoBehaviour
     public void colectCoin(int number){
         switch(number){
             case 1:
-                moneda1.enabled = false;
+                moneda1Blank.enabled = false;
+                moneda1.enabled = true;
                 break;
             case 2:
-                moneda2.enabled = false;
+                moneda2Blank.enabled = false;
+                moneda2.enabled = true;
                 break;
             case 3:
-                moneda3.enabled = false;
+                moneda3Blank.enabled = false;
+                moneda3.enabled = true;
                 break;
             case 4:
-                moneda4.enabled = false;
+                moneda4Blank.enabled = false;
+                moneda4.enabled = true;
+                break;
+            case 5:
+                moneda5Blank.enabled = false;
+                moneda5.enabled = true;
                 break;
         }
     }

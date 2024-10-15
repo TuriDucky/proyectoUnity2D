@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     public bool facingRight; //true si el ultimo input fue el de ir a la derecha, false si lo mismo pero izquierda
 
     public float jumptime; // El tiempo en el que el jugador puede seguir apretando el boton de salto para saltar mas alto
-    float jumptimeCounter;
+    public float jumptimeCounter;
     public bool isJumping; //true si ha usado botones para saltar, false sino
     public bool canJump; //true si puede saltar, false sino
 
@@ -202,7 +202,7 @@ public class Player : MonoBehaviour
         //Aqui hayq ue solucionar el error de los dash jumps
         if (isDashing){
             
-            xSpeed = 20;
+            xSpeed = 17;
             
             if (lastKeyPressed == 'a'){
                 xSpeed = -xSpeed;
