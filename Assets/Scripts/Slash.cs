@@ -42,10 +42,7 @@ public class Slash : MonoBehaviour
             transform.parent.GetComponent<Player>().hitEnemy(enemigo.isDying);
             enemigo.Death();
         }
-        if (collider2D.tag == "Breakable"){
-            Destroy(collider2D.gameObject);
-            Destroy(gameObject);
-        }
+        
         
     }
 

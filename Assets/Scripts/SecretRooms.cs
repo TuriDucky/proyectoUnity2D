@@ -37,7 +37,6 @@ public class SecretRooms : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collider2D){
         
         if (collider2D.tag == "Player"){
-            Debug.Log("entrado");
             isInside = true;
         }
     }
@@ -51,7 +50,6 @@ public class SecretRooms : MonoBehaviour
     void OnTriggerExit2D(Collider2D collider2D){
         
         if (collider2D.tag == "Player"){
-            Debug.Log("salido");
             isInside = false;
         }
     }

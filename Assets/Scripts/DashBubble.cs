@@ -11,7 +11,6 @@ public class DashBubble : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
-        Debug.Log("hola");
     }
 
     

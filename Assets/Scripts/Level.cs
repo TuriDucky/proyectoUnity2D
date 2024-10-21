@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
 
 public class Level : MonoBehaviour
 {
+    LevelData level;
 
     public TMP_Text timerUI;
     float timer;
@@ -31,6 +33,31 @@ public class Level : MonoBehaviour
 
     void Start()
     {
+        level = GameData.getTutorial();
+        loadlevel();
+    }
+
+    private void loadlevel(){
+        if (level.getItem1()){
+            moneda1Blank.enabled = false;
+            moneda1.enabled = true;
+        }
+        if (level.getItem2()){
+            moneda2Blank.enabled = false;
+            moneda2.enabled = true;
+        }
+        if (level.getItem3()){
+            moneda3Blank.enabled = false;
+            moneda3.enabled = true;
+        }
+        if (level.getItem4()){
+            moneda4Blank.enabled = false;
+            moneda4.enabled = true;
+        }
+        if (level.getItem5()){
+            moneda5Blank.enabled = false;
+            moneda5.enabled = true;
+        }
         
     }
 
@@ -48,25 +75,39 @@ public class Level : MonoBehaviour
     public void colectCoin(int number){
         switch(number){
             case 1:
+                level.setItem1(true);
                 moneda1Blank.enabled = false;
                 moneda1.enabled = true;
                 break;
             case 2:
+                level.setItem2(true);
                 moneda2Blank.enabled = false;
                 moneda2.enabled = true;
                 break;
             case 3:
+                level.setItem3(true);
                 moneda3Blank.enabled = false;
                 moneda3.enabled = true;
                 break;
             case 4:
+                level.setItem4(true);
                 moneda4Blank.enabled = false;
                 moneda4.enabled = true;
                 break;
             case 5:
+                level.setItem5(true);
                 moneda5Blank.enabled = false;
                 moneda5.enabled = true;
                 break;
         }
+    }
+
+    public void endLevel(){
+        Debug.Log("Finish");
+        level.setbeaten(true);
+        level.setBestTime(timer);
+        GameData.saveLevelData(level);
+        SceneManager.LoadSceneAsync("Main Menu");
+        
     }
 }
