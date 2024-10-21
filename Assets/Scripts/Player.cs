@@ -341,7 +341,7 @@ public class Player : MonoBehaviour
         
         if (canJump){
             if (GroundCheck.isGrounded || (isDashing && dashStartedGround)){
-                if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
+                if(Input.GetKey(KeyCode.Space)){
                     jumptimeCounter = jumptime;
                     isJumping = true;
                     rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
@@ -350,7 +350,7 @@ public class Player : MonoBehaviour
             }
         }
 
-        if(Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow)){
+        if(Input.GetKey(KeyCode.Space)){
             if (jumptimeCounter > 0){
                 rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
                 jumptimeCounter -= Time.deltaTime;
