@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Minotaur : MonoBehaviour
@@ -13,17 +12,25 @@ public class Minotaur : MonoBehaviour
     
     public bool isPlayerRight;
     public bool bigAttack;
-
-    public float contadorAtaque;
-    public float bigAttackTime;
-
-    public float contadorAtaqueGiratorio;
-    public float TiempoAtaqueGiratorio;
-
     public bool spinAttack;
-    public int wallDirection;
-
     public bool spinDash;
+    public bool isStunned;
+    public bool isVulnerable;
+    public int wallDirection;
+    public int lives;
+
+    public float bigAttackTime;
+    public float bigAttackTimeValue;
+
+    public float spinAttackTime;
+    public float spinAttackTimeValue;
+
+    public float dashStartDelay;
+    public float dashStartDelayValue;
+
+    public float stunTime;
+    public float stunTimeValue;
+    
 
     Rigidbody2D rb2D;
     SpriteRenderer sr;
@@ -32,7 +39,7 @@ public class Minotaur : MonoBehaviour
     
     void Start()
     {   
-        contadorAtaqueGiratorio = TiempoAtaqueGiratorio;
+        spinAttackTime = spinAttackTimeValue;
         wallDirection = Random.Range(0,2);
         
         rb2D = GetComponent<Rigidbody2D>();
@@ -44,93 +51,145 @@ public class Minotaur : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (contadorAtaqueGiratorio > 0 && !spinAttack){
-            contadorAtaqueGiratorio -= Time.deltaTime;
-        }
-        else{
-            if (!bigAttack){
-                spinAttack = true;
-                contadorAtaqueGiratorio = TiempoAtaqueGiratorio;
+        checkPlayerPos();
+        updateTimers();
+
+        if (!isStunned){
+            if (MinotaurPlayerDetection.hasDetecedPlayer && !spinAttack && !spinDash){
+                isMoving = false;
+                bigAttack = true;
+            }
+
+            if (bigAttack  && !spinAttack){
+                if (bigAttackTime <= 0){
+                    bigAttackTime = bigAttackTimeValue;
+                }
+                isMoving = false;
+                BigAttack();
             }
             
-        }
-
-        if (transform.position.x > GameObject.Find("Player").GetComponent<Transform>().position.x && !spinAttack && !spinDash){
-            isPlayerRight = false;
-            sr.flipX = true;
-            cc2D.offset = new Vector2 (0.5f, cc2D.offset.y);
-        }
-        else{
-            isPlayerRight = true;
-            sr.flipX = false;
-            cc2D.offset = new Vector2 (-0.5f, cc2D.offset.y);
-        }
-
-        if (MinotaurPlayerDetection.hasDetecedPlayer && !spinAttack && !spinDash){
-            isMoving = false;
-            bigAttack = true;
-        }
-
-        if (bigAttack  && !spinAttack){
-            if (contadorAtaque <= 0){
-                contadorAtaque = bigAttackTime;
+        
+            if (isMoving && !spinDash){
+                animator.SetBool("isRunning", true);
             }
-            isMoving = false;
-            BigAttack();
+            else{
+                animator.SetBool("isRunning", false);
+            }
         }
         
-        if (contadorAtaque > 0){
-            contadorAtaque -= Time.deltaTime;
-            isMoving = false;
-        }
-        if (contadorAtaque < 0){
-            animator.SetBool("bigAttack", false);
-            bigAttack = false;
-            isMoving = true;
-        }
 
-        if (isMoving){
-            animator.SetBool("isRunning", true);
-        }
-        else{
-            animator.SetBool("isRunning", false);
-        }
+        
     }
 
     void FixedUpdate(){
-        if (isMoving && !spinAttack && !spinDash){
-            if (isPlayerRight){
-                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+        if (!isStunned){
+            if (isMoving && !spinAttack && !spinDash){
+                if (isPlayerRight){
+                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                }
+                else{
+                    rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+                }
             }
             else{
-                rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+                rb2D.velocity = new Vector2(0, rb2D.velocity.y);
             }
-        }
-        else{
-            rb2D.velocity = new Vector2(0, rb2D.velocity.y);
-        }
 
-        if(spinAttack && !spinDash){
-            if (wallDirection == 0){
-                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+            if(spinAttack && !spinDash){
+                if (wallDirection == 0){
+                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                }
+                else{
+                    rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+                }
             }
-            else{
-                rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
-            }
-        }
 
-        if (spinDash){
-            if (wallDirection == 0){
-                rb2D.velocity = new Vector2(-10, rb2D.velocity.y);
-            }
-            else{
-                rb2D.velocity = new Vector2(10, rb2D.velocity.y);
+            if (spinDash && dashStartDelay <= 0){
+                if (wallDirection == 0){
+                    rb2D.velocity = new Vector2(-10, rb2D.velocity.y);
+                }
+                else{
+                    rb2D.velocity = new Vector2(10, rb2D.velocity.y);
+                }
             }
         }
     }
 
     void BigAttack(){
         animator.SetBool("bigAttack", true);
+        if (isPlayerRight){
+            sr.flipX = false;
+        }
+        else{
+            sr.flipX = true;
+        }
+    }
+
+    void checkPlayerPos(){
+        if(!bigAttack && !spinAttack){
+            if (transform.position.x > GameObject.Find("Player").GetComponent<Transform>().position.x){
+                isPlayerRight = false;
+                sr.flipX = true;
+                cc2D.offset = new Vector2 (0.5f, cc2D.offset.y);
+            }
+            else{
+                isPlayerRight = true;
+                sr.flipX = false;
+                cc2D.offset = new Vector2 (-0.5f, cc2D.offset.y);
+            }
+        }
+    }
+
+    void updateTimers(){
+        if(!isStunned){
+            if (dashStartDelay > 0){
+                dashStartDelay -=Time.deltaTime;
+            }
+            else{
+                dashStartDelay = 0;
+            }
+
+            if (bigAttackTime > 0){
+                bigAttackTime -= Time.deltaTime;
+                isMoving = false;
+            }
+            if (bigAttackTime < 0){
+                animator.SetBool("bigAttack", false);
+                bigAttack = false;
+                isMoving = true;
+            }
+
+            if (!spinDash && !isStunned){
+                if (spinAttackTime > 0 && !spinAttack){
+                    spinAttackTime -= Time.deltaTime;
+                }
+                else{
+                    if (!bigAttack){
+                        spinAttack = true;
+                        spinAttackTime = spinAttackTimeValue;
+                    }
+                }
+            }
+            
+        }
+        else{
+            if (stunTime > 0){
+                stunTime -= Time.deltaTime;
+            }
+            else{
+                isStunned = false;
+                isVulnerable = false;
+                animator.SetBool("isStunned", false);
+            }   
+        }  
+    }
+
+    public void hurt(){
+        isVulnerable = false;
+        lives --;
+        if (lives <= 0){
+            Destroy(gameObject);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision2D){
@@ -138,14 +197,32 @@ public class Minotaur : MonoBehaviour
             if (spinDash){
                 spinDash = false;
                 animator.SetBool("SpinAttack", false);
+                isStunned = true;
+                isVulnerable = true;
+                animator.SetBool("isStunned", true);
+                stunTime = stunTimeValue;
+                rb2D.velocity = new Vector2(2, 5);
             }
-            if (spinAttack == true){
+            if (spinAttack){
+                checkPlayerPos();
                 spinAttack = false;
                 spinDash = true;
                 animator.SetBool("SpinAttack", true);
                 animator.SetBool("bigAttack", false);
                 animator.SetBool("isRunning", false);
+                dashStartDelay = dashStartDelayValue; 
             } 
+        }
+
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D colider){
+        if (colider.tag == "Attack"){
+            Debug.Log("fsadf");
+            if (isVulnerable){
+                hurt();
+            }
         }
     }
 }

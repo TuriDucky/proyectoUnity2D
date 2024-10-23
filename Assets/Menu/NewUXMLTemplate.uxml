@@ -1,5 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement name="VisualElement" style="flex-grow: 1; align-self: center;">
-        <ui:Button text="Tutorial" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Tutorial" style="height: 55px; width: 292px; align-self: center; justify-content: center; align-items: center; margin-top: 200px;" />
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement name="VisualElement" style="flex-grow: 1; position: absolute; background-image: url(&quot;project://database/Assets/Menu/book.png?fileID=2800000&amp;guid=2ce09b08a3799574b9f6300ce9b872a2&amp;type=3#book&quot;); width: 672px; height: 408px; top: 46px; left: 93px; align-self: auto; justify-content: flex-start;" />
+        <ui:VisualElement focusable="false" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Menu/paper_sheet.png?fileID=2800000&amp;guid=fe5efd0295b4c7c4ab4123538347982d&amp;type=3#paper_sheet&quot;); margin-right: 0; width: 288px; height: 372px; position: absolute; top: 65px; left: 814px;" />
+        <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Menu/paper_square.png?fileID=2800000&amp;guid=260e68229af2cd945ae94819e0058a0d&amp;type=3#paper_square&quot;); position: absolute; width: 248px; height: 255px; top: 478px; left: 1065px;" />
     </ui:VisualElement>
 </ui:UXML>

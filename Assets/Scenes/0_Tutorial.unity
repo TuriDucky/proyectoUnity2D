@@ -101229,13 +101229,20 @@ MonoBehaviour:
   isMoving: 0
   isPlayerRight: 0
   bigAttack: 0
-  contadorAtaque: 0
-  bigAttackTime: 1.2
-  contadorAtaqueGiratorio: 0
-  TiempoAtaqueGiratorio: 5
   spinAttack: 0
-  wallDirection: 0
   spinDash: 0
+  isStunned: 0
+  isVulnerable: 0
+  wallDirection: 0
+  lives: 6
+  bigAttackTime: 0
+  bigAttackTimeValue: 1.2
+  spinAttackTime: 0
+  spinAttackTimeValue: 5
+  dashStartDelay: 0
+  dashStartDelayValue: 0.9
+  stunTime: 0
+  stunTimeValue: 5
 --- !u!1 &1566729164
 GameObject:
   m_ObjectHideFlags: 0
@@ -103743,7 +103750,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 6, y: 2.6600266}
+  m_Size: {x: 4, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &2061930702
 MonoBehaviour:

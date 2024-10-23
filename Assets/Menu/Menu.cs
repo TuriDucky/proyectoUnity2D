@@ -7,17 +7,17 @@ using UnityEngine.UIElements;
 
 public class Menu : MonoBehaviour
 {
-    UIDocument menu;
-    Button tutorial;
-    void OnEnable(){
-        menu = GetComponent<UIDocument>();
-        VisualElement root = menu.rootVisualElement;
-        tutorial = root.Q<Button>("Tutorial");
+    //UIDocument menu;
+    //Button tutorial;
+    //void OnEnable(){
+    //    menu = GetComponent<UIDocument>();
+//        VisualElement root = menu.rootVisualElement;
+    //    tutorial = root.Q<Button>("Tutorial");
+//
+   //     tutorial.RegisterCallback<ClickEvent>(loadTutorial);
+   // }
 
-        tutorial.RegisterCallback<ClickEvent>(loadTutorial);
-    }
-
-    private void loadTutorial(ClickEvent clickEvent){
-        SceneManager.LoadSceneAsync("0_Tutorial");
-    }
+   // private void loadTutorial(ClickEvent clickEvent){
+   //     SceneManager.LoadSceneAsync("0_Tutorial");
+   // }
 }
