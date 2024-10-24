@@ -7,25 +7,37 @@ using UnityEngine.UIElements;
 
 public class GameData : MonoBehaviour
 {
-    public static LevelData tutorial;
+    public static int numeroNiveles = 1;
+    public static LevelData Tutorial;
+    public static LevelData Level1;
     void Start(){
         loadSaveFile();
     }
 
     public void loadSaveFile(){
-        if (File.Exists("save.txt")){
-            
-        }
-        else{ 
+        if (!File.Exists("save.txt")){
             File.WriteAllText("save.txt", createSaveFile());
         }
+
+        if (!File.Exists("Tutorial.txt")){
+            File.WriteAllText("Tutorial.txt", createLevelSaveFile("Tutorial"));
+        }
+        if (!File.Exists("Level1.txt")){
+            File.WriteAllText("Level1.txt", createLevelSaveFile("Level1"));
+        }
+        
         loadSaveData();
     }
 
     public String createSaveFile(){
         String savedata = "";
 
-        savedata += "Tutorial|"; //Nombre del nivel
+        return savedata;
+    }
+    public String createLevelSaveFile(String levelName){
+        String savedata = "";
+
+        savedata += String.Concat(levelName,"|"); //Nombre del nivel (El del Parametro)
         savedata += "false|"; //Si esta completado o no
         savedata += "000000|"; //El mejor tiempo
         savedata += "false|"; //Collecionable 1
@@ -33,18 +45,25 @@ public class GameData : MonoBehaviour
         savedata += "false|"; //Collecionable 3
         savedata += "false|"; //Collecionable 4
         savedata += "false|"; //Collecionable 5
+        savedata += "0|"; //Puntuacion Maxima
+        savedata += "-1|"; //Rango del nivel (D - S)
 
         return savedata;
     }
 
     public void loadSaveData(){
-        String fileData = File.ReadAllText("save.txt");
-        String[] data = fileData.Split("|");
-        tutorial = new LevelData(data[0], Convert.ToBoolean(data[1]), float.Parse(data[2]), Convert.ToBoolean(data[3]), Convert.ToBoolean(data[4]), Convert.ToBoolean(data[5]), Convert.ToBoolean(data[6]), Convert.ToBoolean(data[7]) );
+        String tutorialFileData = File.ReadAllText("Tutorial.txt");
+        String[] tutorialData = tutorialFileData.Split("|");
+        Tutorial = new LevelData(tutorialData[0], Convert.ToBoolean(tutorialData[1]), float.Parse(tutorialData[2]), Convert.ToBoolean(tutorialData[3]), Convert.ToBoolean(tutorialData[4]), Convert.ToBoolean(tutorialData[5]), Convert.ToBoolean(tutorialData[6]), Convert.ToBoolean(tutorialData[7]), Convert.ToInt32(tutorialData[8]), Convert.ToInt32(tutorialData[9]));
+    
+        String level1FileData = File.ReadAllText("Level1.txt");
+        String[] level1Data = level1FileData.Split("|");
+        Level1 = new LevelData(level1Data[0], Convert.ToBoolean(level1Data[1]), float.Parse(level1Data[2]), Convert.ToBoolean(level1Data[3]), Convert.ToBoolean(level1Data[4]), Convert.ToBoolean(level1Data[5]), Convert.ToBoolean(level1Data[6]), Convert.ToBoolean(level1Data[7]), Convert.ToInt32(level1Data[8]), Convert.ToInt32(level1Data[9]));
+    
     }
 
     public static void saveLevelData(LevelData level){
-        String file = File.ReadAllText("save.txt");
+        String file = File.ReadAllText(level.getName() + ".txt");
         String[] data = file.Split("|");
         
         if (level.getBeaten()){
@@ -90,12 +109,33 @@ public class GameData : MonoBehaviour
         else{
             data[7] = "false|";
         }
+
+        if (Convert.ToInt32(data[8]) <= level.getScore()){
+            //data[8] = level.getScore().ToString() +  "|";
+            data[8] = "435626|";
+        }
+        else{
+            data[8] = "2|";
+        }
         
-        File.Delete("save.txt");
-        File.WriteAllText("save.txt", String.Concat(data));
+        if (Convert.ToInt32(data[9]) <= level.getRank()){
+            //data[9] = level.getRank().ToString() +  "|";
+            data[9] = "3|";
+        }
+        else{
+            data[9] = "1|";
+        }
+        
+        
+        File.Delete(level.getName() + ".txt");
+        File.WriteAllText(level.getName() + ".txt", String.Concat(data));
     }
 
     public static LevelData getTutorial(){
-        return tutorial;
+        return Tutorial;
+    }
+
+    public static LevelData getLevel1(){
+        return Level1;
     }
 }

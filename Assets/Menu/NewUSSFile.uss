@@ -1,1 +1,25 @@
-VisualElement {}
+.bookButton {
+    transition-duration: 0.1s;
+}
+
+.bookButton:hover {
+    scale: 1.1 1.1;
+}
+
+.bookButton:active {
+    transition-duration: 0.05s;
+    scale: 0.9 0.9;
+}
+
+.playButton {
+    transition-duration: 0.2s;
+}
+
+.playButton:hover {
+    scale: 1.2 1.2;
+}
+
+.playButton:active {
+    transition-duration: 0.05s;
+    scale: 0.9 0.9;
+}

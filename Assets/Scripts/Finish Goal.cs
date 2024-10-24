@@ -6,8 +6,7 @@ public class FinishGoal : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D collider2D){
         if (collider2D.tag == "Player"){
-            GameObject.Find("Level").GetComponent<Level>().endLevel();
-            
+            GameObject.Find("Level").GetComponent<Level>().endLevel(); 
         }
     }
 }

@@ -8,6 +8,8 @@ public class LevelData
     private string levelName;
     private bool isBeaten;
     private float bestTime;
+    private int maxScore;
+    private int rank; //-1 = ?, 0 = D, 1 = C, 2 = B, 3 = A, 4 = S
     private bool item1;
     private bool item2 ;
     private bool item3;
@@ -16,16 +18,20 @@ public class LevelData
 
     
 
-    public LevelData(string name, bool beaten, float time, bool coll1, bool coll2, bool coll3, bool coll4, bool coll5){
+    public LevelData(string name, bool beaten, float time, bool coll1, bool coll2, bool coll3, bool coll4, bool coll5, int score, int newRank){
         setName(name);
         setbeaten(beaten);
         setBestTime(time);
+        setScore(score);
+        setRank(newRank);
 
         setItem1(coll1);
         setItem2(coll2);
         setItem3(coll3);
         setItem4(coll4);
         setItem5(coll5);
+
+        
     }
 
     public string getName(){
@@ -50,6 +56,22 @@ public class LevelData
 
     public void setBestTime(float time){
         this.bestTime = time;
+    }
+
+    public int getScore(){
+        return maxScore;
+    }
+
+    public void setScore(int newScore){
+        this.maxScore = newScore;
+    }
+
+    public int getRank(){
+        return rank;
+    }
+
+    public void setRank(int newRank){
+        this.rank = newRank;
     }
 
     public bool getItem1(){
