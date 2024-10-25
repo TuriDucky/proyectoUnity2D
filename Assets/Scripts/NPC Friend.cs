@@ -3,10 +3,11 @@ using UnityEngine;
 public class NPC_Friend : MonoBehaviour
 {
     public float xSpeed;
-    int direction;
-    float counter;
-    public float counterValue;
-    bool isMoving;
+    private int direction;
+    private float counter;
+    public float maxWalkTime;
+    public float minWalkTime;
+    private bool isMoving;
     private Animator andar;
 
     Rigidbody2D rb2D;
@@ -24,7 +25,7 @@ public class NPC_Friend : MonoBehaviour
     void Update()
     {
         if (counter <= 0){
-            counter = counterValue;
+            counter = Random.Range(minWalkTime, maxWalkTime);
             if (isMoving){
                 isMoving = false;
             }
@@ -35,6 +36,18 @@ public class NPC_Friend : MonoBehaviour
         }
         counter -= Time.deltaTime;
         
+        
+
+        if (transform.GetChild (0).GetComponent<edgeDetection>().getEdge() || transform.GetChild (1).GetComponent<edgeDetection>().getEdge()){
+            transform.GetChild (0).GetComponent<edgeDetection>().setEdge(false);
+            transform.GetChild (1).GetComponent<edgeDetection>().setEdge(false);
+            if (direction == 1){
+                direction = 0;
+            }
+            else{
+                direction = 1;
+            }
+        }
         
     }
 
