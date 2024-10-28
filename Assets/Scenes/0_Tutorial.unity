@@ -81439,7 +81439,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00000000372529, y: -0.0000000037206656, z: -1.38605585e-17, w: 1}
-  m_LocalPosition: {x: 145.1, y: -5.8, z: -10}
+  m_LocalPosition: {x: 152.14, y: 4.96, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -91053,7 +91053,7 @@ Transform:
   m_GameObject: {fileID: 1365176061}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 145.1, y: -7.8, z: 0}
+  m_LocalPosition: {x: 152.14, y: 2.96, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -91077,29 +91077,37 @@ MonoBehaviour:
   xAcceleration: 0.5
   xSpeedCap: 10
   xSpeedCapAirborn: 7
+  lastKeyPressed: 609
+  comboRebote: 0
   facingRight: 0
-  jumptime: 0.25
-  jumptimeCounter: 0
   isJumping: 0
   canJump: 0
-  lastKeyPressed: 609
   isDashing: 0
   dashStartedGround: 0
-  dashTime: 0.25
-  dashCount: 1
-  dashCountCounter: 0
-  dashDelay: 0.5
-  dashDelayCounter: 0
-  slashDelay: 0.4
   isHit: 0
-  knockbackTime: 0.5
-  comboRebote: 0
   isRespawning: 0
-  respawnTime: 0
-  respawnTimeCounter: 0
+  downSlam: 0
   animationJump: 0
+  jumpTimeValue: 0.25
+  jumpTimeCounter: 0
+  dashTimeValue: 0.25
+  dashTimeCounter: 0
+  dashCountValue: 1
+  dashCountCounter: 0
+  dashDelayValue: 0.5
+  dashDelayCounter: 0
+  slashDelayValue: 0.4
+  slashDelayCounter: 0
+  knockbackTimeValue: 0.5
+  knockbackTimeCounter: 0
+  respawnTimeValue: 0
+  respawnTimeCounter: 0
+  slamStartTimeValue: 0.15
+  slamStartTimeCounter: 0
   lastCheckpoint: {x: 0, y: 0, z: 0}
-  SlashPrefab: {fileID: 2503804259583579234, guid: 06befe9478a1e204fa34720c1b4e8d93, type: 3}
+  SlashPrefab: {fileID: 2503804259583579234, guid: fd652c566e099864da412afad42e7d24, type: 3}
+  StompPrefab: {fileID: 3202646694981284806, guid: 36fe88b1182144c4290e9d630b63d3d5, type: 3}
+  LandPrefab: {fileID: 5344354264747536214, guid: 3e581f1a405407443a4e41f11b2af9d0, type: 3}
   rb2D: {fileID: 0}
   animator: {fileID: 1365176067}
 --- !u!50 &1365176065
@@ -103634,7 +103642,7 @@ Transform:
   m_GameObject: {fileID: 1735877844}
   serializedVersion: 2
   m_LocalRotation: {x: -0.00000000372529, y: -0.0000000037206656, z: -1.3860559e-17, w: 1}
-  m_LocalPosition: {x: 145.1, y: -7.8, z: -10}
+  m_LocalPosition: {x: 152.14, y: 2.96, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

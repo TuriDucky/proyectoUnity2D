@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Slash : MonoBehaviour
+public class Stomp : MonoBehaviour
 {
     GameObject player;
     float lifeCounter;
-    public float playerDirection;
 
+ 
     void Start()
     {
         player = GameObject.Find("Player");
-        lifeCounter = 0.3f;
-        
+
+        lifeCounter = 99999999;
+
     }
 
     void FixedUpdate()
     {
         ajustarPosicion();
-        lifeCounter -= Time.deltaTime;
+        lifeCounter --;
         if (lifeCounter <= 0){
             Destroy(gameObject);
         }
@@ -40,29 +41,22 @@ public class Slash : MonoBehaviour
             transform.parent.GetComponent<Player>().hitEnemy(enemigo.isDying);
             enemigo.Death();
         }
-        
-        
+        if (collider2D.tag == "terrain"){
+            Destroy(gameObject);
+        }
+        if (collider2D.tag == "Semisolid"){
+            Destroy(gameObject);
+        }
+    
     }
 
     void ajustarPosicion(){
         Vector2 posicion = player.transform.position;
+    
+        posicion.y -= 1;
+        posicion.x += 0.2f;
+        transform.position = posicion;
         
-        if (playerDirection == 1){
-            posicion.y -= 2;
-            transform.position = posicion;
-        }
-        else if(playerDirection == 2){
-            posicion.y += 2;
-            transform.position = posicion;
-        }
-        else if(playerDirection == 3){
-            posicion.x -= 2;
-            transform.position = posicion;
-        }
-        else{
-            posicion.x += 2;
-            transform.position = posicion;
-        }
-
+  
     }
 }

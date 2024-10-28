@@ -1,1 +1,1 @@
-Tutorial|true|23,37944|true|true|true|true|false|435626|3|
+Tutorial|true|8,581731|true|true|true|true|false|435626|3|

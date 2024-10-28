@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Slash : MonoBehaviour
+public class Land : MonoBehaviour
 {
     GameObject player;
     float lifeCounter;
-    public float playerDirection;
 
     void Start()
     {
         player = GameObject.Find("Player");
-        lifeCounter = 0.3f;
-        
+        transform.position = player.transform.position;
+        transform.position = new Vector3 (transform.position.x, transform.position.y + 0.5f, transform.position.z);
+
+        lifeCounter = 0.7f;
+
     }
 
     void FixedUpdate()
     {
-        ajustarPosicion();
+
         lifeCounter -= Time.deltaTime;
         if (lifeCounter <= 0){
             Destroy(gameObject);
@@ -44,25 +46,5 @@ public class Slash : MonoBehaviour
         
     }
 
-    void ajustarPosicion(){
-        Vector2 posicion = player.transform.position;
-        
-        if (playerDirection == 1){
-            posicion.y -= 2;
-            transform.position = posicion;
-        }
-        else if(playerDirection == 2){
-            posicion.y += 2;
-            transform.position = posicion;
-        }
-        else if(playerDirection == 3){
-            posicion.x -= 2;
-            transform.position = posicion;
-        }
-        else{
-            posicion.x += 2;
-            transform.position = posicion;
-        }
-
-    }
+  
 }
