@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public bool isDying;
     private float deathDirection;
     public bool isVisible;
+    EnemyPatroll patroll;
 
     Rigidbody2D rb2D;
     BoxCollider2D bc2D;
@@ -19,6 +20,7 @@ public class Enemy : MonoBehaviour
         counter = 0;
         rb2D = GetComponent<Rigidbody2D>();
         bc2D = GetComponent<BoxCollider2D>();
+        patroll = transform.GetChild(0).GetComponent<EnemyPatroll>();
         deathCounter = 200;
     }
 
@@ -49,7 +51,7 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate(){
         if(!isDying){
-            if (!EnemyPatroll.hasDetectedPlayer){
+            if (!patroll.getDetected()){
                 if (isMoving){
                     if (direction == 1){
                         rb2D.velocity = new Vector2(3, rb2D.velocity.y);
@@ -66,7 +68,7 @@ public class Enemy : MonoBehaviour
             else{
                 counter = 1;
                 isMoving = true;
-                var direction = transform.InverseTransformPoint (EnemyPatroll.coll.transform.position); 
+                var direction = transform.InverseTransformPoint (patroll.getplayer().transform.position); 
             
                 if (direction.x > 0){
                     rb2D.velocity = new Vector2 (5 , rb2D.velocity.y);

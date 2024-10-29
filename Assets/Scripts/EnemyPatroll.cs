@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class EnemyPatroll : MonoBehaviour
 {
-    public static Collider2D coll;
-    public static bool hasDetectedPlayer;
+    public Collider2D coll;
+    public bool hasDetectedPlayer;
     private void OnTriggerEnter2D(Collider2D collider2D){
         
         if(collider2D.gameObject.tag == "Player"){
@@ -19,5 +19,13 @@ public class EnemyPatroll : MonoBehaviour
             coll = collider2D;
             hasDetectedPlayer = false;
         }
+    }
+
+    public bool getDetected(){
+        return hasDetectedPlayer;
+    }
+
+    public Collider2D getplayer(){
+        return coll;
     }
 }

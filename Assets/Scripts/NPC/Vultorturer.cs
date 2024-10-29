@@ -1,20 +1,30 @@
 using UnityEngine;
 
-public class Slimer : MonoBehaviour
+public class Vultorturer : MonoBehaviour
 {
-    public int direction;
+
 
     public float xSpeed;
-    public float xRunSpeed;
-    public float roamCounter;
-    public float roamValue;
-    public bool isMoving;
+    public float xAccel;
+    public float maxXSpeed;
+
+    public float ySpeed;
+    public float yAccel;
+    public float maxYSpeed;
+
+    
+    public bool isAttacking;
+    public float attackTimeCounter;
+    public float attackTimeValue;
+
+    public bool hasDetectedPlayer;
     public float deathCounter;
     public bool isDying;
     private float deathDirection;
     public bool isVisible;
 
 
+    Vector3 player;
     Rigidbody2D rb2D;
     SpriteRenderer sr;
     BoxCollider2D bc2D;
@@ -23,11 +33,11 @@ public class Slimer : MonoBehaviour
     void Start()
     {   
         isDying = false;
-        roamCounter = 0;
         rb2D = GetComponent<Rigidbody2D>();
         bc2D = GetComponent<BoxCollider2D>();
         sr = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
         patroll = transform.GetChild(0).GetComponent<EnemyPatroll>();
         deathCounter = 2;
     }
@@ -36,25 +46,22 @@ public class Slimer : MonoBehaviour
     void Update()
     {
 
-        
+        player = GameObject.Find("Player").transform.position;
 
-        if (roamCounter <= 0){
-            roamCounter = roamValue;
-            if (isMoving){
-                isMoving = false;
+        if(hasDetectedPlayer){
+            if (attackTimeCounter > 0){
+                attackTimeCounter -= Time.deltaTime;
             }
             else{
-                isMoving = true;
-                if (direction == 1){
-                    direction = 0;
+                attackTimeCounter = attackTimeValue;
+                if (isAttacking){
+                    isAttacking = false;
                 }
                 else{
-                    direction = 1;
+                    isAttacking = true;
                 }
             }
         }
-        roamCounter -= Time.deltaTime;
-        
         if (isDying){
             if (!isVisible){
                 deathCounter -= Time.deltaTime;
@@ -63,54 +70,53 @@ public class Slimer : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        else{
-            if (transform.GetChild (1).GetComponent<SlimerAttack>().getPlayer()){
-                animator.SetBool("isAttacking", true);
-            }
-            else{
-                animator.SetBool("isAttacking", false);
-            }
+        
+        if (patroll.getDetected()){
+            hasDetectedPlayer = true;
+            animator.SetBool("Fly", true);
         }
 
-        if (rb2D.velocity.x > 0){
-            sr.flipX = true;
-        }
-        else{
-            sr.flipX = false;
-        }
+
     }
 
     void FixedUpdate(){
         if(!isDying){
-            if (!patroll.getDetected()){
-                if (isMoving){
-                    if (direction == 1){
-                        rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
-                    }
-                    if (direction == 0){
-                        rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+            if (hasDetectedPlayer){
+                if (transform.position.y - 5 < player.y){
+                    ySpeed += yAccel;
+                    if (ySpeed > maxYSpeed){
+                        ySpeed = maxYSpeed;
                     }
                 }
-            }
-            else{
-                roamCounter = 1;
-                isMoving = true;
-                var direction = transform.InverseTransformPoint(patroll.getplayer().transform.position); 
-            
-                if (direction.x > 0){
-                    rb2D.velocity = new Vector2 (xRunSpeed , rb2D.velocity.y);
+                else{
+                    ySpeed -= yAccel;
+                    if (ySpeed < -maxYSpeed){
+                        ySpeed = -maxYSpeed;
+                    }
                 }
-                if (direction.x < 0){
-                    rb2D.velocity = new Vector2 (-xRunSpeed , rb2D.velocity.y);
+
+                if (transform.position.x < player.x){
+                    sr.flipX = false;
+                    xSpeed += xAccel;
+                    if (xSpeed > maxXSpeed){
+                        xSpeed = maxXSpeed;
+                    }
                 }
+                else{
+                    sr.flipX = true;
+                    xSpeed -= xAccel;
+                    if (xSpeed < -maxXSpeed){
+                        xSpeed = -maxXSpeed;
+                    }
+                }
+                
+                rb2D.velocity = new Vector2(xSpeed, ySpeed);
             }
         }
         else{
             rb2D.velocity = new Vector2(deathDirection, rb2D.velocity.y);
         }
-            
 
-        
     }
 
     private void OnCollisionEnter2D(Collision2D collision2D){
