@@ -36,9 +36,7 @@ public class Slash : MonoBehaviour
             Destroy(gameObject);
         }
         if (collider2D.tag == "Enemy"){
-            Enemy enemigo =  collider2D.gameObject.GetComponent<Enemy>();
-            transform.parent.GetComponent<Player>().hitEnemy(enemigo.isDying);
-            enemigo.Death();
+            transform.parent.GetComponent<Player>().hitEnemy();
         }
         
         

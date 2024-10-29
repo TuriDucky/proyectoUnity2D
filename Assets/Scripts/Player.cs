@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
 
     public char lastKeyPressed; // Ultima tecla pulsada. Solo tiene en cuenta las teclas de direccion
     public int comboRebote;
+    public int lives;
 
     public bool facingRight; //true si el ultimo input fue el de ir a la derecha, false si lo mismo pero izquierda
     public bool isJumping; //true si ha usado botones para saltar, false sino
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
     public bool isRespawning;
     public bool downSlam;
     public bool animationJump;
+    public bool playerHasControl;
 
 
     public float jumpTimeValue; // El tiempo en el que el jugador puede seguir apretando el boton de salto para saltar mas alto (Valor por defecto: 0.25)
@@ -46,6 +48,9 @@ public class Player : MonoBehaviour
     public float slamStartTimeValue;
     public float slamStartTimeCounter;
 
+    public float iFramesValue;
+    public float iFramesCounter;
+
 
     public Vector3 lastCheckpoint; //Las cordenadas del ultimo checkpoint visitado
 
@@ -60,6 +65,7 @@ public class Player : MonoBehaviour
     // Inicializa varios valores
     void Start()
     {
+        playerHasControl = true;
         rb2D = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         facingRight = true;
@@ -68,11 +74,15 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (lives <= 0)
+        {
+            death();
+        }
 
         updateTimers();
 
         //Detecta e ultimo boton de direccion que el jugador haya pulsado (siempre que no este dasheando)
-        if (!isDashing)
+        if (!isDashing && playerHasControl)
         {
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
@@ -93,19 +103,19 @@ public class Player : MonoBehaviour
         }
 
         // Actualiza la animacion del personaje de cuando esta en el aire
-        if (!GroundCheck.isGrounded && rb2D.velocity.y > 0)
+        if (!GroundCheck.isGrounded && rb2D.velocity.y > 0 && iFramesCounter <= 0)
         {
             animator.SetBool("isAscending", true);
             animator.SetBool("isFalling", false);
             animationJump = true;
         }
-        if (!GroundCheck.isGrounded && rb2D.velocity.y < 0)
+        if (!GroundCheck.isGrounded && rb2D.velocity.y < 0 && iFramesCounter <= 0)
         {
             animator.SetBool("isAscending", false);
             animator.SetBool("isFalling", true);
             animationJump = true;
         }
-        if (GroundCheck.isGrounded)
+        if (GroundCheck.isGrounded && iFramesCounter <= 0)
         {
             animator.SetBool("isAscending", false);
             animator.SetBool("isFalling", false);
@@ -114,7 +124,7 @@ public class Player : MonoBehaviour
 
         //Detecta el imput del boton de aqtaque y llama al metodo de ataque.
         //Tambien inicia el temporizador de tiempo entre ataques
-        if (Input.GetMouseButtonDown(0) && slashDelayCounter <= 0)
+        if (Input.GetMouseButtonDown(0) && slashDelayCounter <= 0 && playerHasControl)
         {
             slashDelayCounter = knockbackTimeValue;
             slash();
@@ -123,11 +133,15 @@ public class Player : MonoBehaviour
 
         //Detecta si se ha dejado de pulsar el boton de salto para resetear el
         //temporizador de saltos y settear isJumping = false
-        if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.UpArrow))
+        if (playerHasControl)
         {
-            jumpTimeCounter = 0f;
-            isJumping = false;
+            if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                jumpTimeCounter = 0f;
+                isJumping = false;
+            }
         }
+
 
 
         //Detecta si el usuario ha presionado el boton de dash, y comprueba si
@@ -135,7 +149,7 @@ public class Player : MonoBehaviour
         //dashes. Si todo devuelve true, llama al metodo slash(), y activa el
         //temporizador entre dashes y el temporizador de duracion del dash.
         // En caso de que el jugador este presionando abajo, realizara el slam
-        if (Input.GetMouseButtonDown(1) && dashCountCounter > 0 && dashDelayCounter <= 0)
+        if (Input.GetMouseButtonDown(1) && dashCountCounter > 0 && dashDelayCounter <= 0 && playerHasControl)
         {
             dashDelayCounter = dashDelayValue;
             slashDelayCounter = knockbackTimeValue / 2;
@@ -167,7 +181,7 @@ public class Player : MonoBehaviour
 
         // Si el jugador esta encima de una plataforma semisolida, mientras este presionando
         // abajo no podra saltar, para que pueda bajar si presiona el boton de salto
-        if (GroundCheck.touchingSemisolid && Input.GetKey(KeyCode.S))
+        if (GroundCheck.touchingSemisolid && Input.GetKey(KeyCode.S) && playerHasControl)
         {
             canJump = false;
         }
@@ -175,6 +189,7 @@ public class Player : MonoBehaviour
         {
             canJump = true;
         }
+
 
     }
 
@@ -195,7 +210,7 @@ public class Player : MonoBehaviour
         {
             if (slamStartTimeCounter > 0)
             {
-                rb2D.velocity = new Vector2(0, 5);
+                rb2D.velocity = new Vector2(rb2D.velocity.x / 2, 7);
             }
             else
             {
@@ -217,7 +232,6 @@ public class Player : MonoBehaviour
         // Actualizacion sobre la linea de encima: Me ha gustado el error por lo que ahora es una mecanica
         if (isDashing)
         {
-
             xSpeed = 17;
 
             if (lastKeyPressed == 'a')
@@ -266,86 +280,98 @@ public class Player : MonoBehaviour
         // La logica del movimiento horizontal del peronaje.
 
         //Solo se puede hacer mover el personaje hacia los lados si no esta dasheando o no esta ene stado de hit
+
+
+
+
         if (!isDashing && !isHit && !downSlam)
         {
+
             //Izquierda
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
             {
-
-                facingRight = false;
-                sr.flipX = true;
-
-                //Cuando este en el suelo aplic
-                if (GroundCheck.isGrounded)
+                if (playerHasControl)
                 {
+                    facingRight = false;
+                    sr.flipX = true;
 
-                    animator.SetBool("isRunning", false);
-
-                    if (!animationJump)
+                    //Cuando este en el suelo aplic
+                    if (GroundCheck.isGrounded)
                     {
-                        animator.SetBool("isRunning", true);
-                    }
 
+                        animator.SetBool("isRunning", false);
 
-                    xSpeed = xSpeed - xAcceleration * 3;
-                    if (xSpeed < -xSpeedCap)
-                    {
-                        xSpeed = -xSpeedCap;
-                    }
-                }
-                else
-                {
-                    if (xSpeed >= -xSpeedCapAirborn)
-                    {
-                        xSpeed = xSpeed - xAcceleration;
-
-                        if (xSpeed < -xSpeedCapAirborn)
+                        if (!animationJump)
                         {
-                            xSpeed = -xSpeedCapAirborn;
+                            animator.SetBool("isRunning", true);
+                        }
+
+
+                        xSpeed = xSpeed - xAcceleration * 3;
+                        if (xSpeed < -xSpeedCap)
+                        {
+                            xSpeed = -xSpeedCap;
                         }
                     }
+                    else
+                    {
+                        if (xSpeed >= -xSpeedCapAirborn)
+                        {
+                            xSpeed = xSpeed - xAcceleration;
+
+                            if (xSpeed < -xSpeedCapAirborn)
+                            {
+                                xSpeed = -xSpeedCapAirborn;
+                            }
+                        }
+                    }
+                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
                 }
-                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
             }
 
             //Derecha
-            else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            else
+
+                if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
             {
-
-                facingRight = true;
-                sr.flipX = false;
-
-                if (GroundCheck.isGrounded)
+                if (playerHasControl)
                 {
+                    facingRight = true;
+                    sr.flipX = false;
 
-                    animator.SetBool("isRunning", false);
-
-                    if (!animationJump)
+                    if (GroundCheck.isGrounded)
                     {
-                        animator.SetBool("isRunning", true);
-                    }
 
+                        animator.SetBool("isRunning", false);
 
-                    xSpeed = xSpeed + xAcceleration * 3;
-                    if (xSpeed > xSpeedCap)
-                    {
-                        xSpeed = xSpeedCap;
-                    }
-                }
-                else
-                {
-                    if (xSpeed <= xSpeedCapAirborn)
-                    {
-                        xSpeed = xSpeed + xAcceleration;
-
-                        if (xSpeed > xSpeedCapAirborn)
+                        if (!animationJump)
                         {
-                            xSpeed = xSpeedCapAirborn;
+                            animator.SetBool("isRunning", true);
+                        }
+
+
+                        xSpeed = xSpeed + xAcceleration * 3;
+                        if (xSpeed > xSpeedCap)
+                        {
+                            xSpeed = xSpeedCap;
                         }
                     }
+                    else
+                    {
+                        if (xSpeed <= xSpeedCapAirborn)
+                        {
+                            xSpeed = xSpeed + xAcceleration;
+
+                            if (xSpeed > xSpeedCapAirborn)
+                            {
+                                xSpeed = xSpeedCapAirborn;
+                            }
+                        }
+                    }
+                    rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
                 }
-                rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
             }
+
             else
             {
                 animator.SetBool("isRunning", false);
@@ -383,33 +409,38 @@ public class Player : MonoBehaviour
             }
         }
 
-        // Logica del salto de personaje.
-        if (canJump)
-        {
-            if (GroundCheck.isGrounded || (isDashing && dashStartedGround))
-            {
-                if (Input.GetKey(KeyCode.Space))
-                {
-                    jumpTimeCounter = jumpTimeValue;
-                    isJumping = true;
-                    rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
 
+        // Logica del salto de personaje.
+        if (playerHasControl)
+        {
+            if (canJump)
+            {
+                if (GroundCheck.isGrounded || (isDashing && dashStartedGround))
+                {
+                    if (Input.GetKey(KeyCode.Space))
+                    {
+                        jumpTimeCounter = jumpTimeValue;
+                        isJumping = true;
+                        rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
+
+                    }
+                }
+            }
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                if (jumpTimeCounter > 0)
+                {
+                    rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
+                    jumpTimeCounter -= Time.deltaTime;
+                }
+                else
+                {
+                    jumpTimeCounter = 0;
                 }
             }
         }
 
-        if (Input.GetKey(KeyCode.Space))
-        {
-            if (jumpTimeCounter > 0)
-            {
-                rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
-                jumpTimeCounter -= Time.deltaTime;
-            }
-            else
-            {
-                jumpTimeCounter = 0;
-            }
-        }
     }
 
     /*
@@ -467,6 +498,25 @@ public class Player : MonoBehaviour
         {
             dashDelayCounter = 0;
         }
+
+        // Tiempo de inmunidad;
+        if (iFramesCounter > 0)
+        {
+            if (iFramesCounter < 0.8)
+            {
+                animator.SetBool("isHit", false);
+            }
+            iFramesCounter -= Time.deltaTime;
+        }
+        else
+        {
+            animator.SetBool("isHit", false);
+            iFramesCounter = 0;
+            if (lives <= 0)
+            {
+                Respawn();
+            }
+        }
     }
 
 
@@ -503,16 +553,14 @@ public class Player : MonoBehaviour
         Instantiate(LandPrefab, transform.position, Quaternion.identity);
     }
 
-    public void hitEnemy(bool enemyIsDying)
+    public void hitEnemy()
     {
-        if (lastKeyPressed == 's' && !enemyIsDying && !GroundCheck.isGrounded)
+        if (lastKeyPressed == 's' && !GroundCheck.isGrounded)
         {
             rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
-        }
-        if (enemyIsDying)
-        {
             comboRebote++;
         }
+
     }
 
     public void setCheckpoint(Vector3 newCheckpoint)
@@ -522,28 +570,54 @@ public class Player : MonoBehaviour
 
     public void Respawn()
     {
+        if (lives <= 0)
+        {
+            lives = 3;
+        }
+        transform.position = lastCheckpoint;
+
+        animator.SetBool("death", false);
+        playerHasControl = true;
         rb2D.velocity = new Vector2(0, 0);
         xSpeed = 0;
-        respawnTimeCounter = respawnTimeValue;
-        transform.position = lastCheckpoint;
     }
 
+    public void setStomp(bool stomp)
+    {
+        downSlam = stomp;
+    }
+
+    public void beenHit(Collision2D coll)
+    {
+        lives--;
+        animator.SetBool("isDashing", false);
+        isDashing = false;
+        dashCountCounter = 0;
+        animator.SetBool("isHit", true);
+        if (coll.transform.position.x > transform.position.x){
+            xSpeed = -15;
+        }
+        else{
+            xSpeed = 15;
+        }
+        
+        rb2D.velocity = new Vector2(xSpeed, 10);
+        iFramesCounter = iFramesValue;
+    }
+
+    public void death()
+    {
+        animator.SetBool("death", true);
+        playerHasControl = false;
+    }
 
     void OnCollisionEnter2D(Collision2D coll)
     {
         if (coll.collider.tag == "Enemy")
         {
-            isHit = true;
-            knockbackTimeCounter = knockbackTimeValue;
-            var direction = transform.InverseTransformPoint(coll.transform.position);
-
-            if (direction.x > 0)
+            if (iFramesCounter <= 0)
             {
-                rb2D.velocity = new Vector2(-3, rb2D.velocity.y);
-            }
-            if (direction.x < 0)
-            {
-                rb2D.velocity = new Vector2(3, rb2D.velocity.y);
+                beenHit(coll);
             }
         }
     }

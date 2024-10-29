@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class Bubble : MonoBehaviour
 {
     GameObject player;
     public float vectorLenght;
+    public bool lockAxis;
     
     void Start()
     {
@@ -33,13 +35,48 @@ public class Bubble : MonoBehaviour
         newX = -newX;
         newY = -newY;
         
+        if (!lockAxis){
+            if (newX < 5 && newX > -5){
+                newX = 0;
+            }
+            if (newY < 5 && newY > -5){
+                newY = 0;
+            }
+        }
+        else{
 
-        if (newX < 2 && newX > -2){
-            newX = 0;
+            float distanciaMinusVectorLenghtX = Math.Abs(newX - (-vectorLenght));
+            float distancia0X = Math.Abs(newX - 0);
+            float distanciavectorLenghtX = Math.Abs(newX - vectorLenght);
+
+            if (distanciaMinusVectorLenghtX <= distancia0X && distanciaMinusVectorLenghtX <= distanciavectorLenghtX){
+                newX = -vectorLenght;
+            }
+            else if (distancia0X <= distanciaMinusVectorLenghtX && distancia0X <= distanciavectorLenghtX){
+                newX = 0;
+            }
+            else{
+                newX = vectorLenght;
+            }
+
+            float distanciaMinusVectorLenghtY = Math.Abs(newY - (-vectorLenght));
+            float distancia0Y = Math.Abs(newY - 0);
+            float distanciaVectorLenghtY = Math.Abs(newY - vectorLenght);
+
+            if (distanciaMinusVectorLenghtY <= distancia0Y && distanciaMinusVectorLenghtY <= distanciaVectorLenghtY){
+                newY = -vectorLenght;
+            }
+            else if (distancia0Y <= distanciaMinusVectorLenghtY && distancia0Y <= distanciaVectorLenghtY){
+                newY = 0;
+            }
+            else{
+                newY = vectorLenght;
+            }
         }
-        if (newY < 2 && newY > -2){
-            newY = 0;
-        }
+            
+
+        Debug.Log (newX);
+        Debug.Log (newY);
         
         player.GetComponent<Player>().xSpeed = Mathf.Round(newX);
         player.GetComponent<Player>().rb2D.velocity = new Vector2(newX, newY);

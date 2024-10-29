@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5617552649733288734}
   - component: {fileID: 848468155290626869}
   - component: {fileID: 6247280992821831165}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Stomp
   m_TagString: Attack
   m_Icon: {fileID: 0}
@@ -174,4 +174,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43e2f2ffef5b7914cb51d7b6218c93c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}

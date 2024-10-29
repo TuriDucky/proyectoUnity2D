@@ -29,19 +29,19 @@ public class Stomp : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider2D){
         if (collider2D.tag == "Bubble"){
+            player.GetComponent<Player>().setStomp(false);
             collider2D.transform.GetComponent<Bubble>().bubbleBlast(collider2D.transform.position);
             Destroy(gameObject);
         }
         if (collider2D.tag == "DashBubble"){
+            player.GetComponent<Player>().setStomp(false);
             collider2D.transform.GetComponent<DashBubble>().bubbleBlast(collider2D.transform.position);
             Destroy(gameObject);
         }
         if (collider2D.tag == "Enemy"){
-            Enemy enemigo =  collider2D.gameObject.GetComponent<Enemy>();
-            transform.parent.GetComponent<Player>().hitEnemy(enemigo.isDying);
-            enemigo.Death();
+            transform.parent.GetComponent<Player>().hitEnemy();
         }
-        if (collider2D.tag == "terrain"){
+        if (GroundCheck.isGrounded){
             Destroy(gameObject);
         }
         if (collider2D.tag == "Semisolid"){

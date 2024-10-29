@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9019539356790690841}
   - component: {fileID: 2560045660480527679}
   - component: {fileID: 5335233485570818322}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Land
   m_TagString: Attack
   m_Icon: {fileID: 0}
@@ -176,4 +176,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a435f7b7210eb524d9ee0157f411b195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
