@@ -9,7 +9,9 @@ public class Level : MonoBehaviour
     LevelData level;
 
     public TMP_Text timerUI;
+    public TMP_Text pointsUI;
     float timer;
+    int score;
 
     int minutos;
     int segundos;
@@ -31,6 +33,7 @@ public class Level : MonoBehaviour
     {
         level = GameData.getTutorial();
         loadlevel();
+        addScore(0);
     }
 
     private void loadlevel(){
@@ -66,9 +69,11 @@ public class Level : MonoBehaviour
         decimas = (int) ((timer - (int)timer) * 100f);
 
         timerUI.text = String.Format("{0:00}:{1:00}:{2:00}", minutos, segundos, decimas);
+        
     }
 
     public void colectCoin(int number){
+        addScore(10000);
         switch(number){
             case 1:
                 level.setItem1(true);
@@ -101,9 +106,33 @@ public class Level : MonoBehaviour
     public void endLevel(){
         Debug.Log("Finish");
         level.setbeaten(true);
-        level.setBestTime(timer);
+        
+        if (level.getBestTime() > timer){
+            level.setBestTime(timer);
+        }
+
+        timeBonus();
+
+        if (level.getScore() < score){
+            level.setScore(score);
+        }
+        
+        
         GameData.saveLevelData(level);
         SceneManager.LoadSceneAsync("Main Menu");
+        
+    }
+
+    public void addScore(int points){
+        score += points;
+        pointsUI.text = score.ToString() + " pts";
+    }
+
+    public void timeBonus(){
+        int value = 300 - Convert.ToInt32(timer);
+        if (value > 0){
+            score += value * 100;
+        }
         
     }
 }

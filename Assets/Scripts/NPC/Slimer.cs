@@ -13,6 +13,7 @@ public class Slimer : MonoBehaviour
     public bool isDying;
     private float deathDirection;
     public bool isVisible;
+    public int pointValue;
 
 
     Rigidbody2D rb2D;
@@ -125,6 +126,7 @@ public class Slimer : MonoBehaviour
 
 
     public void Death(){
+        GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
         rb2D.constraints = RigidbodyConstraints2D.None;
         deathDirection = Random.Range(-4, 4);
         rb2D.velocity = new Vector2(deathDirection, 15);

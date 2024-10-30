@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -18,6 +19,7 @@ public class Menu : MonoBehaviour
     Label levelName;
     Label score;
     Label rank;
+    Label time;
 
     VisualElement item1;
     VisualElement item2;
@@ -25,6 +27,7 @@ public class Menu : MonoBehaviour
     VisualElement item4;
     VisualElement item5;
     VisualElement image;
+    VisualElement trophy;
 
     public Texture2D missing;
     public Texture2D apple;
@@ -32,6 +35,10 @@ public class Menu : MonoBehaviour
     public Texture2D canvas;
     public Texture2D train;
     public Texture2D fly;
+
+    public Texture2D gold;
+    public Texture2D silver;
+    public Texture2D bronze;
     public Texture2D tutorial;
     public Texture2D level1;
     void OnEnable(){
@@ -48,6 +55,7 @@ public class Menu : MonoBehaviour
         levelName = root.Q<Label>("levelName");
         score = root.Q<Label>("score");
         rank = root.Q<Label>("rank");
+        time = root.Q<Label>("time");
 
         item1 = root.Q<VisualElement>("item1");
         item2 = root.Q<VisualElement>("item2");
@@ -56,6 +64,7 @@ public class Menu : MonoBehaviour
         item5 = root.Q<VisualElement>("item5");
 
         image = root.Q<VisualElement>("image");
+        trophy = root.Q<VisualElement>("trophy");
 
         back.SetEnabled(false);
         if (page >= numPages){
@@ -179,6 +188,31 @@ public class Menu : MonoBehaviour
         }
 
 
+        if(elNivel.getBestTime() > 0){
+            time.text = formatTime(elNivel.getBestTime());
+        }
+        else{
+            time.text = "---";
+        }
+        
+        if (elNivel.getBestTime() <= 0){
+            trophy.style.backgroundImage = Background.FromTexture2D(missing);
+        }
+        else if (elNivel.getBestTime() < GameData.TutorialGold){
+            Debug.Log("gold");
+            trophy.style.backgroundImage = Background.FromTexture2D(gold);
+        }
+        else if (elNivel.getBestTime() < GameData.TutorialSilver){
+            Debug.Log("silver");
+            trophy.style.backgroundImage = Background.FromTexture2D(silver);
+        }
+        else if (elNivel.getBestTime() < GameData.TutorialBronze){
+            Debug.Log("bronze");
+            trophy.style.backgroundImage = Background.FromTexture2D(bronze);
+        }
+        
+
+
         int theRank = elNivel.getRank();
         string rankLetter = "?";
 
@@ -217,5 +251,19 @@ public class Menu : MonoBehaviour
         }
         
         return null;
+    }
+
+    private String formatTime(float timer){
+
+        int minutos;
+        int segundos;
+        int decimas;
+        
+
+        minutos = (int) (timer / 60f);
+        segundos = (int) (timer - minutos * 60f);
+        decimas = (int) ((timer - (int)timer) * 100f);
+
+        return String.Format("{0:00}:{1:00}:{2:00}", minutos, segundos, decimas);
     }
 }

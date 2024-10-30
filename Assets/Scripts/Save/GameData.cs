@@ -9,8 +9,22 @@ public class GameData : MonoBehaviour
 {
     public static int numeroNiveles = 1;
     public static LevelData Tutorial;
+    public static float TutorialGold;
+    public static float TutorialSilver;
+    public static float TutorialBronze;
+
     public static LevelData Level1;
+    public static float Level1Gold;
+    public static float Level1Silver;
+    public static float Level1Bronze;
     void Start(){
+        TutorialGold = 20;
+        TutorialSilver = 40;
+        TutorialBronze = 60;
+
+        Level1Gold = 0;
+        Level1Silver = 0;
+        Level1Bronze = 0;
         loadSaveFile();
     }
 
@@ -111,20 +125,13 @@ public class GameData : MonoBehaviour
         }
 
         if (Convert.ToInt32(data[8]) <= level.getScore()){
-            //data[8] = level.getScore().ToString() +  "|";
-            data[8] = "435626|";
-        }
-        else{
-            data[8] = "2|";
+            data[8] = level.getScore().ToString() +  "|";
         }
         
         if (Convert.ToInt32(data[9]) <= level.getRank()){
-            //data[9] = level.getRank().ToString() +  "|";
-            data[9] = "3|";
+            data[9] = level.getRank().ToString() +  "|";
         }
-        else{
-            data[9] = "1|";
-        }
+        
         
         
         File.Delete(level.getName() + ".txt");

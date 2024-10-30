@@ -12,16 +12,19 @@ public class Vultorturer : MonoBehaviour
     public float yAccel;
     public float maxYSpeed;
 
-    
+
     public bool isAttacking;
     public float attackTimeCounter;
     public float attackTimeValue;
+
+    public int lives;
 
     public bool hasDetectedPlayer;
     public float deathCounter;
     public bool isDying;
     private float deathDirection;
     public bool isVisible;
+    public int pointValue;
 
 
     Vector3 player;
@@ -31,7 +34,7 @@ public class Vultorturer : MonoBehaviour
     Animator animator;
     EnemyPatroll patroll;
     void Start()
-    {   
+    {
         isDying = false;
         rb2D = GetComponent<Rigidbody2D>();
         bc2D = GetComponent<BoxCollider2D>();
@@ -48,30 +51,41 @@ public class Vultorturer : MonoBehaviour
 
         player = GameObject.Find("Player").transform.position;
 
-        if(hasDetectedPlayer){
-            if (attackTimeCounter > 0){
+        if (hasDetectedPlayer)
+        {
+            if (attackTimeCounter > 0)
+            {
                 attackTimeCounter -= Time.deltaTime;
             }
-            else{
-                attackTimeCounter = attackTimeValue;
-                if (isAttacking){
+            else
+            {
+
+                if (isAttacking)
+                {
                     isAttacking = false;
+                    attackTimeCounter = attackTimeValue;
                 }
-                else{
+                else
+                {
                     isAttacking = true;
+                    attackTimeCounter = attackTimeValue / 3;
                 }
             }
         }
-        if (isDying){
-            if (!isVisible){
+        if (isDying)
+        {
+            if (!isVisible)
+            {
                 deathCounter -= Time.deltaTime;
             }
-            if (deathCounter <= 0){
+            if (deathCounter <= 0)
+            {
                 Destroy(gameObject);
             }
         }
-        
-        if (patroll.getDetected()){
+
+        if (patroll.getDetected())
+        {
             hasDetectedPlayer = true;
             animator.SetBool("Fly", true);
         }
@@ -79,58 +93,95 @@ public class Vultorturer : MonoBehaviour
 
     }
 
-    void FixedUpdate(){
-        if(!isDying){
-            if (hasDetectedPlayer){
-                if (transform.position.y - 5 < player.y){
+    void FixedUpdate()
+    {
+        if (!isDying)
+        {
+            if (hasDetectedPlayer)
+            {
+
+                float above;
+
+                if (isAttacking)
+                {
+                    above = 0;
+                }
+                else
+                {
+                    above = 5;
+                }
+
+                if (transform.position.y - above < player.y)
+                {
                     ySpeed += yAccel;
-                    if (ySpeed > maxYSpeed){
+                    if (ySpeed > maxYSpeed)
+                    {
                         ySpeed = maxYSpeed;
                     }
                 }
-                else{
+                else
+                {
                     ySpeed -= yAccel;
-                    if (ySpeed < -maxYSpeed){
+                    if (ySpeed < -maxYSpeed)
+                    {
                         ySpeed = -maxYSpeed;
                     }
                 }
 
-                if (transform.position.x < player.x){
+                if (transform.position.x < player.x)
+                {
                     sr.flipX = false;
                     xSpeed += xAccel;
-                    if (xSpeed > maxXSpeed){
+                    if (xSpeed > maxXSpeed)
+                    {
                         xSpeed = maxXSpeed;
                     }
                 }
-                else{
+                else
+                {
                     sr.flipX = true;
                     xSpeed -= xAccel;
-                    if (xSpeed < -maxXSpeed){
+                    if (xSpeed < -maxXSpeed)
+                    {
                         xSpeed = -maxXSpeed;
                     }
                 }
-                
+
                 rb2D.velocity = new Vector2(xSpeed, ySpeed);
             }
         }
-        else{
+        else
+        {
             rb2D.velocity = new Vector2(deathDirection, rb2D.velocity.y);
         }
 
     }
 
-    private void OnCollisionEnter2D(Collision2D collision2D){
-        
+    private void OnCollisionEnter2D(Collision2D collision2D)
+    {
+
     }
 
-    private void OnTriggerEnter2D(Collider2D collider2D){
-        if (collider2D.gameObject.CompareTag("Attack")){
+    private void OnTriggerEnter2D(Collider2D collider2D)
+    {
+        if (collider2D.gameObject.CompareTag("Attack"))
+        {
+            hit();
+        }
+    }
+
+    public void hit()
+    {
+        lives--;
+        if (lives <= 0)
+        {
             Death();
         }
     }
 
-
-    public void Death(){
+    public void Death()
+    {
+        GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
         rb2D.constraints = RigidbodyConstraints2D.None;
         deathDirection = Random.Range(-4, 4);
         rb2D.velocity = new Vector2(deathDirection, 15);
@@ -139,10 +190,12 @@ public class Vultorturer : MonoBehaviour
         isDying = true;
     }
 
-    void OnBecameVisible(){
+    void OnBecameVisible()
+    {
         isVisible = true;
     }
-    void OnBecameInvisible(){
+    void OnBecameInvisible()
+    {
         isVisible = false;
     }
 }
