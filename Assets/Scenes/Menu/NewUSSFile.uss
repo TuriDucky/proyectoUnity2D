@@ -1,0 +1,41 @@
+.bookButton {
+    transition-duration: 0.1s;
+}
+
+.bookButton:hover {
+    scale: 1.1 1.1;
+}
+
+.bookButton:active {
+    transition-duration: 0.05s;
+    scale: 0.9 0.9;
+}
+
+.playButton {
+    transition-duration: 0.2s;
+}
+
+.playButton:hover {
+    scale: 1.2 1.2;
+}
+
+.playButton:active {
+    transition-duration: 0.05s;
+    scale: 0.9 0.9;
+}
+
+.transition_end {
+    flex-grow: 1;
+    background-image: url("project://database/Assets/transition.png?fileID=2800000&guid=19f31283e370215489d607ec89e0e568&type=3#transition");
+    width: 2500px;
+    height: 1084px;
+    position: absolute;
+    top: 0;
+    left: 2000px;
+    transition-duration: 2s;
+    transition-timing-function: ease-out;
+}
+
+.transition_start {
+    translate: -2300px 0;
+}

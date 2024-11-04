@@ -1,0 +1,77 @@
+VisualElement {
+}
+
+.results_end {
+    flex-grow: 1;
+    position: absolute;
+    background-image: url("project://database/Assets/Scenes/Results/images/results.png?fileID=2800000&guid=775c07dff9d477742bf2c5e6cdf3bcce&type=3#results");
+    width: 894px;
+    height: 450px;
+    top: 0;
+    left: 50px;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out;
+}
+
+.results_start {
+    top: -500px;
+}
+
+.rank_end {
+    flex-grow: 1;
+    position: absolute;
+    background-image: url("project://database/Assets/Sprites/Ranks/D.png?fileID=2800000&guid=efcb697d1fdedcc489de3a8494f7df17&type=3#D");
+    width: 374px;
+    height: 450px;
+    top: 443px;
+    left: 1372px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-out-bounce;
+}
+
+.rank_start {
+    width: 748px;
+    height: 900px;
+    left: 998px;
+    top: 200px;
+}
+
+.record_end {
+    flex-grow: 1;
+    position: absolute;
+    background-image: url("project://database/Assets/Scenes/Results/images/record.png?fileID=2800000&guid=1e2a47e0a2530844daa9fe7dedbd1f7a&type=3#record");
+    width: 374px;
+    top: 247px;
+    left: 1515px;
+    bottom: 708px;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.record_start {
+    left: 1950px;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.rank_start {
+    transition-timing-function: linear;
+    transition-duration: 0.1s;
+    background-image: url("project://database/Assets/Sprites/Ranks/S.png?fileID=2800000&guid=46a4dbfd649eb9a4991a04394f97e74d&type=3#S");
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0);
+}
+
+.transition_end {
+    flex-grow: 1;
+    position: absolute;
+    background-image: url("project://database/Assets/Scenes/Menu/images/transition.png?fileID=2800000&guid=19f31283e370215489d607ec89e0e568&type=3#transition");
+    width: 2500px;
+    height: 1100px;
+    left: 2000px;
+    right: auto;
+}
+
+.transition_start {
+    left: -200px;
+    transition-duration: 0.2s;
+    transition-timing-function: ease-in-out-cubic;
+}

@@ -18,7 +18,7 @@ public class GameData : MonoBehaviour
     public static float Level1Silver;
     public static float Level1Bronze;
     void Start(){
-        TutorialGold = 20;
+        TutorialGold = 25;
         TutorialSilver = 40;
         TutorialBronze = 60;
 

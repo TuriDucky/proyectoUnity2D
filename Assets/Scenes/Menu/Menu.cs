@@ -18,7 +18,6 @@ public class Menu : MonoBehaviour
     Button exit;
     Label levelName;
     Label score;
-    Label rank;
     Label time;
 
     VisualElement item1;
@@ -28,6 +27,9 @@ public class Menu : MonoBehaviour
     VisualElement item5;
     VisualElement image;
     VisualElement trophy;
+    VisualElement transition;
+    VisualElement rank;
+    VisualElement background;
 
     public Texture2D missing;
     public Texture2D apple;
@@ -35,14 +37,22 @@ public class Menu : MonoBehaviour
     public Texture2D canvas;
     public Texture2D train;
     public Texture2D fly;
+    public Texture2D S;
+    public Texture2D A;
+    public Texture2D B;
+    public Texture2D C;
+    public Texture2D D;
 
     public Texture2D gold;
     public Texture2D silver;
     public Texture2D bronze;
     public Texture2D tutorial;
     public Texture2D level1;
-    void OnEnable(){
 
+    public float trasitionTimeCounter;
+    public float trasitionTimeValue;
+
+    void OnEnable(){
         page = 1;
         menu = GetComponent<UIDocument>();
         VisualElement root = menu.rootVisualElement;
@@ -53,10 +63,10 @@ public class Menu : MonoBehaviour
         exit = root.Q<Button>("exit");
 
         levelName = root.Q<Label>("levelName");
-        score = root.Q<Label>("score");
-        rank = root.Q<Label>("rank");
+        score = root.Q<Label>("score"); 
         time = root.Q<Label>("time");
 
+        rank = root.Q<VisualElement>("rank");
         item1 = root.Q<VisualElement>("item1");
         item2 = root.Q<VisualElement>("item2");
         item3 = root.Q<VisualElement>("item3");
@@ -65,6 +75,12 @@ public class Menu : MonoBehaviour
 
         image = root.Q<VisualElement>("image");
         trophy = root.Q<VisualElement>("trophy");
+        transition = root.Q<VisualElement>("transition");
+        background = root.Q<VisualElement>("background");
+
+        
+        //transitionStart();
+        Invoke("transitionStart", 0.1f);
 
         back.SetEnabled(false);
         if (page >= numPages){
@@ -83,12 +99,33 @@ public class Menu : MonoBehaviour
 
         back.RegisterCallback<ClickEvent>(flipPageBackwards);
         next.RegisterCallback<ClickEvent>(flipPageFordwards);
-        play.RegisterCallback<ClickEvent>(loadLevel);
+        play.RegisterCallback<ClickEvent>(transitionEnd);
 
-        loadPage();
+        
+        
     }
 
-    private void loadLevel(ClickEvent clickEvent){
+    void Update(){
+        background.transform.rotation *= Quaternion.Euler(0f, 0f, -5 * Time.deltaTime);
+        loadPage();
+        if (trasitionTimeCounter > 0){
+            trasitionTimeCounter -= Time.deltaTime;
+            if(trasitionTimeCounter <= 0){
+                loadLevel();
+            }
+        }
+    }
+
+    private void transitionStart(){
+        transition.RemoveFromClassList("transition_start");
+    }
+    private void transitionEnd(ClickEvent clickEvent){
+        
+        transition.AddToClassList("transition_start");
+        trasitionTimeCounter = trasitionTimeValue;
+    }
+
+    private void loadLevel(){
         if (page == 1){
             SceneManager.LoadSceneAsync("0_Tutorial");
         }  
@@ -137,8 +174,8 @@ public class Menu : MonoBehaviour
         LevelData elNivel = checkPagelevel();
         
         levelName.text = elNivel.getName();
-        if (elNivel.getScore() > 0){
-            score.text = elNivel.getScore().ToString();
+        if (elNivel.getBestTime() > 0){
+            score.text = calculateScore(elNivel);
         }
         else{
             score.text = "---";
@@ -214,32 +251,58 @@ public class Menu : MonoBehaviour
 
 
         int theRank = elNivel.getRank();
-        string rankLetter = "?";
 
         switch(theRank){
-            case -1:
-                rankLetter =  "?";
-                break;
-            case 0:
-                rankLetter =  "D";
-                break;
-            case 1:
-                rankLetter =  "C";  
-                break;
-            case 2:
-                rankLetter =  "B"; 
+            case 4:
+                rank.style.backgroundImage = Background.FromTexture2D(S);
                 break;
             case 3:
-                rankLetter =  "A"; 
+                rank.style.backgroundImage = Background.FromTexture2D(A);
                 break;
-            case 4:
-                rankLetter =  "S"; 
+            case 2:
+                rank.style.backgroundImage = Background.FromTexture2D(B);
                 break;
+            case 1:
+                rank.style.backgroundImage = Background.FromTexture2D(C);
+                break;
+            case 0:
+                rank.style.backgroundImage = Background.FromTexture2D(D);
+                break;
+            case -1:
+                rank.style.backgroundImage = Background.FromTexture2D(missing);
+                break;
+            
+        }
+    }
+
+    private string calculateScore(LevelData level){
+        int points = level.getScore();
+        int bonus = 0;
+        if (level.getItem1()){
+            bonus += 10000;
+        }
+        if (level.getItem2()){
+            bonus += 10000;
+        }
+        if (level.getItem3()){
+            bonus += 10000;
+        }
+        if (level.getItem4()){
+            bonus += 10000;
+        }
+        if (level.getItem5()){
+            bonus += 10000;
         }
 
-        rank.text = rankLetter;
-        
-        
+        int timeBonus = 0;
+        int value = 300 - Convert.ToInt32(level.getBestTime());
+        if (value > 0){
+            timeBonus += value * 200;
+        }
+
+        int totalScore = points + bonus + timeBonus;
+        Debug.Log(totalScore);
+        return totalScore.ToString();
     }
 
     private LevelData checkPagelevel(){

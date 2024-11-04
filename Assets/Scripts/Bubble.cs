@@ -73,13 +73,8 @@ public class Bubble : MonoBehaviour
                 newY = vectorLenght;
             }
         }
-            
-
-        Debug.Log (newX);
-        Debug.Log (newY);
         
         player.GetComponent<Player>().xSpeed = Mathf.Round(newX);
         player.GetComponent<Player>().rb2D.velocity = new Vector2(newX, newY);
-
     }
 }

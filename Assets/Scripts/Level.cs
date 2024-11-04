@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using Image = UnityEngine.UI.Image;
 
 public class Level : MonoBehaviour
@@ -11,8 +12,10 @@ public class Level : MonoBehaviour
     public TMP_Text timerUI;
     public TMP_Text pointsUI;
     float timer;
+    int displayScore;
+    int coinScore;
     int score;
-
+    
     int minutos;
     int segundos;
     int decimas;
@@ -73,7 +76,8 @@ public class Level : MonoBehaviour
     }
 
     public void colectCoin(int number){
-        addScore(10000);
+        addDisplayScore(10000);
+        coinScore += 10000;
         switch(number){
             case 1:
                 level.setItem1(true);
@@ -103,36 +107,77 @@ public class Level : MonoBehaviour
         }
     }
 
+
     public void endLevel(){
         Debug.Log("Finish");
         level.setbeaten(true);
         
-        if (level.getBestTime() > timer){
+        if (level.getBestTime() == 0|| level.getBestTime() > timer){
+            Results.isNewRecord = true;
             level.setBestTime(timer);
         }
 
-        timeBonus();
-
         if (level.getScore() < score){
-            level.setScore(score);
+            
+            level.setScore(score);  
         }
         
-        
+        setRank();
         GameData.saveLevelData(level);
-        SceneManager.LoadSceneAsync("Main Menu");
+        setResultsValues();
+        SceneManager.LoadSceneAsync("Results");
         
     }
 
     public void addScore(int points){
         score += points;
-        pointsUI.text = score.ToString() + " pts";
+        displayScore += points;
+        pointsUI.text = displayScore.ToString() + " pts";
     }
 
-    public void timeBonus(){
+    public void addDisplayScore(int points){
+        displayScore += points;
+        pointsUI.text = displayScore.ToString() + " pts";
+    }
+
+    public void setResultsValues(){
+        Results.levelTime = timer;
+        Results.levelScore = score;
+        Results.levelBonus = coinScore;
+    }
+
+    public int timeBonus(){
+        int timeBonus = 0;
         int value = 300 - Convert.ToInt32(timer);
         if (value > 0){
-            score += value * 100;
+            timeBonus += value * 200;
         }
-        
+        return timeBonus;
+    }
+
+    public void setRank(){
+        int totalScore = displayScore + timeBonus();
+        Debug.Log(totalScore);
+        if (totalScore >= 100000){
+            Debug.Log("Rank S");
+            level.setRank(4);
+        }
+        else if (totalScore >= 90000){
+            Debug.Log("Rank A");
+            level.setRank(3);
+        }
+        else if (totalScore >= 70000){
+            Debug.Log("Rank B");
+            level.setRank(2);
+        }
+        else if (totalScore >= 50000){
+            Debug.Log("Rank C");
+            level.setRank(1);
+        }
+        else{
+            Debug.Log("Rank D");
+            level.setRank(0);
+        }
+        Results.levelRank = level.getRank();
     }
 }
