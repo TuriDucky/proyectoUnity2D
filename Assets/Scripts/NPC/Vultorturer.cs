@@ -25,6 +25,7 @@ public class Vultorturer : MonoBehaviour
     private float deathDirection;
     public bool isVisible;
     public int pointValue;
+    public bool isStatic;
 
 
     Vector3 player;
@@ -33,6 +34,7 @@ public class Vultorturer : MonoBehaviour
     BoxCollider2D bc2D;
     Animator animator;
     EnemyPatroll patroll;
+    Enemy generic;
     void Start()
     {
         isDying = false;
@@ -43,6 +45,10 @@ public class Vultorturer : MonoBehaviour
 
         patroll = transform.GetChild(0).GetComponent<EnemyPatroll>();
         deathCounter = 2;
+        generic = GetComponent<Enemy>();
+        generic.setPoints(pointValue);
+        generic.setLives(lives);
+
     }
 
     // Update is called once per frame
@@ -51,27 +57,30 @@ public class Vultorturer : MonoBehaviour
 
         player = GameObject.Find("Player").transform.position;
 
-        if (hasDetectedPlayer)
-        {
-            if (attackTimeCounter > 0)
+        if (!isStatic){
+            if (hasDetectedPlayer)
             {
-                attackTimeCounter -= Time.deltaTime;
-            }
-            else
-            {
-
-                if (isAttacking)
+                if (attackTimeCounter > 0)
                 {
-                    isAttacking = false;
-                    attackTimeCounter = attackTimeValue;
+                    attackTimeCounter -= Time.deltaTime;
                 }
                 else
                 {
-                    isAttacking = true;
-                    attackTimeCounter = attackTimeValue / 3;
+
+                    if (isAttacking)
+                    {
+                        isAttacking = false;
+                        attackTimeCounter = attackTimeValue;
+                    }
+                    else
+                    {
+                        isAttacking = true;
+                        attackTimeCounter = attackTimeValue / 3;
+                    }
                 }
             }
         }
+        
         if (isDying)
         {
             if (!isVisible)
@@ -84,18 +93,18 @@ public class Vultorturer : MonoBehaviour
             }
         }
 
-        if (patroll.getDetected())
-        {
-            hasDetectedPlayer = true;
-            animator.SetBool("Fly", true);
+        if (!isStatic){
+            if (patroll.getDetected())
+            {
+                hasDetectedPlayer = true;
+                animator.SetBool("Fly", true);
+            }
         }
-
-
     }
 
     void FixedUpdate()
     {
-        if (!isDying)
+        if (!isDying && !isStatic)
         {
             if (hasDetectedPlayer)
             {
@@ -181,7 +190,10 @@ public class Vultorturer : MonoBehaviour
 
     public void Death()
     {
-        GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
+        if(!isDying){
+            animator.SetBool("Fly", false);
+            GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
+        }
         rb2D.constraints = RigidbodyConstraints2D.None;
         deathDirection = Random.Range(-4, 4);
         rb2D.velocity = new Vector2(deathDirection, 15);

@@ -9,6 +9,7 @@ public class Slash : MonoBehaviour
     float lifeCounter;
     public float playerDirection;
 
+
     void Start()
     {
         player = GameObject.Find("Player");
@@ -36,10 +37,15 @@ public class Slash : MonoBehaviour
             Destroy(gameObject);
         }
         if (collider2D.tag == "Enemy"){
-            transform.parent.GetComponent<Player>().hitEnemy();
+            Enemy enemy = collider2D.GetComponent<Enemy>();
+            if (!enemy.getDying() && enemy.getLives() >= 1){
+                transform.parent.GetComponent<Player>().hitEnemy();
+                enemy.setLives(enemy.getLives() - 1);
+                if (enemy.getLives() < 1){
+                    collider2D.GetComponent<Enemy>().setDying(true);
+                }
+            }
         }
-        
-        
     }
 
     void ajustarPosicion(){

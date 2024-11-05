@@ -2,117 +2,37 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public int direction;
-    public float counter;
-    public float counterValue;
-    public bool isMoving;
-    public float deathCounter;
-    public bool isDying;
-    private float deathDirection;
-    public bool isVisible;
-    EnemyPatroll patroll;
 
-    Rigidbody2D rb2D;
-    BoxCollider2D bc2D;
+    public bool isDying;
+    public int pointValue;
+    public int lives = 1;
+    
     void Start()
     {   
         isDying = false;
-        counter = 0;
-        rb2D = GetComponent<Rigidbody2D>();
-        bc2D = GetComponent<BoxCollider2D>();
-        patroll = transform.GetChild(0).GetComponent<EnemyPatroll>();
-        deathCounter = 200;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (counter == 0){
-            counter = counterValue;
-            if (isMoving){
-                isMoving = false;
-            }
-            else{
-                isMoving = true;
-                direction = Random.Range(0,2);
-            }
-        }
-        counter --;
-        
-        if (isDying){
-            if (!isVisible){
-                deathCounter --;
-            }
-            if (deathCounter == 0){
-                Destroy(gameObject);
-            }
-        }
+    public void setDying(bool die){
+        isDying = die;
     }
 
-    void FixedUpdate(){
-        if(!isDying){
-            if (!patroll.getDetected()){
-                if (isMoving){
-                    if (direction == 1){
-                        rb2D.velocity = new Vector2(3, rb2D.velocity.y);
-                    }
-                    if (direction == 0){
-                        rb2D.velocity = new Vector2(-3, rb2D.velocity.y);
-                    }
-                }
-
-                if (!isMoving){
-                    rb2D.velocity = new Vector2 (0, rb2D.velocity.y);
-                }
-            }
-            else{
-                counter = 1;
-                isMoving = true;
-                var direction = transform.InverseTransformPoint (patroll.getplayer().transform.position); 
-            
-                if (direction.x > 0){
-                    rb2D.velocity = new Vector2 (5 , rb2D.velocity.y);
-                }
-                if (direction.x < 0){
-                    rb2D.velocity = new Vector2 (-5 , rb2D.velocity.y);
-                }
-            }
-        }
-        else{
-            rb2D.velocity = new Vector2(deathDirection, rb2D.velocity.y);
-        }
-            
-
-        
+    public bool getDying(){
+        return isDying;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision2D){
-        if (collision2D.collider.tag == "Wall"){
-            if (direction == 0){
-                direction = 1;
-            }
-            if (direction == 1){
-                direction = 0;
-            }
-        }
-
-        if (collision2D.collider.tag == "Attack"){
-            Destroy(gameObject);
-        }
+    public void setPoints(int points){
+        this.pointValue = points;
     }
 
-
-    public void Death(){
-        deathDirection = Random.Range(-4, 4);
-        rb2D.velocity = new Vector2(deathDirection, 20);
-        bc2D.isTrigger = true;
-        isDying = true;
+    public int getPoints(){
+        return pointValue;
     }
 
-    void OnBecameVisible(){
-        isVisible = true;
+    public void setLives(int lp){
+        lives = lp;
     }
-    void OnBecameInvisible(){
-        isVisible = false;
+
+    public int getLives(){
+        return lives;
     }
 }

@@ -14,6 +14,7 @@ public class Slimer : MonoBehaviour
     private float deathDirection;
     public bool isVisible;
     public int pointValue;
+    public bool isStatic;
 
 
     Rigidbody2D rb2D;
@@ -21,6 +22,7 @@ public class Slimer : MonoBehaviour
     BoxCollider2D bc2D;
     Animator animator;
     EnemyPatroll patroll;
+    Enemy generic;
     void Start()
     {   
         isDying = false;
@@ -31,31 +33,32 @@ public class Slimer : MonoBehaviour
         animator = GetComponent<Animator>();
         patroll = transform.GetChild(0).GetComponent<EnemyPatroll>();
         deathCounter = 2;
+        generic = GetComponent<Enemy>();
+        generic.setPoints(pointValue);
     }
 
     // Update is called once per frame
     void Update()
-    {
-
-        
-
-        if (roamCounter <= 0){
-            roamCounter = roamValue;
-            if (isMoving){
-                isMoving = false;
-            }
-            else{
-                isMoving = true;
-                if (direction == 1){
-                    direction = 0;
+    {      
+        if(!isStatic){
+            if (roamCounter <= 0){
+                roamCounter = roamValue;
+                if (isMoving){
+                    isMoving = false;
                 }
                 else{
-                    direction = 1;
+                    isMoving = true;
+                    if (direction == 1){
+                        direction = 0;
+                    }
+                    else{
+                        direction = 1;
+                    }
                 }
             }
+            roamCounter -= Time.deltaTime;
         }
-        roamCounter -= Time.deltaTime;
-        
+
         if (isDying){
             if (!isVisible){
                 deathCounter -= Time.deltaTime;
@@ -72,39 +75,54 @@ public class Slimer : MonoBehaviour
                 animator.SetBool("isAttacking", false);
             }
         }
-
-        if (rb2D.velocity.x > 0){
-            sr.flipX = true;
+        
+        if(isStatic){
+            var playerDirection = transform.InverseTransformPoint(patroll.getplayer().transform.position);
+            if (playerDirection.x > 0){
+                sr.flipX = true;
+            }
+            else{
+                sr.flipX = false;
+            }
         }
         else{
-            sr.flipX = false;
+            if (rb2D.velocity.x > 0){
+                sr.flipX = true;
+            }
+            else{
+                sr.flipX = false;
+            }
         }
+        
     }
 
     void FixedUpdate(){
         if(!isDying){
-            if (!patroll.getDetected()){
-                if (isMoving){
-                    if (direction == 1){
-                        rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+            if(!isStatic){
+                if (!patroll.getDetected()){
+                    if (isMoving){
+                        if (direction == 1){
+                            rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                        }
+                        if (direction == 0){
+                            rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+                        }
                     }
-                    if (direction == 0){
-                        rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+                }
+                else{
+                    roamCounter = 1;
+                    isMoving = true;
+                    var direction = transform.InverseTransformPoint(patroll.getplayer().transform.position); 
+                
+                    if (direction.x > 0){
+                        rb2D.velocity = new Vector2 (xRunSpeed , rb2D.velocity.y);
+                    }
+                    if (direction.x < 0){
+                        rb2D.velocity = new Vector2 (-xRunSpeed , rb2D.velocity.y);
                     }
                 }
             }
-            else{
-                roamCounter = 1;
-                isMoving = true;
-                var direction = transform.InverseTransformPoint(patroll.getplayer().transform.position); 
             
-                if (direction.x > 0){
-                    rb2D.velocity = new Vector2 (xRunSpeed , rb2D.velocity.y);
-                }
-                if (direction.x < 0){
-                    rb2D.velocity = new Vector2 (-xRunSpeed , rb2D.velocity.y);
-                }
-            }
         }
         else{
             rb2D.velocity = new Vector2(deathDirection, rb2D.velocity.y);
@@ -126,13 +144,18 @@ public class Slimer : MonoBehaviour
 
 
     public void Death(){
-        GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
+        if (!isDying){
+            animator.SetBool("isAttacking", false);
+            GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
+        }
+        
         rb2D.constraints = RigidbodyConstraints2D.None;
         deathDirection = Random.Range(-4, 4);
         rb2D.velocity = new Vector2(deathDirection, 15);
         rb2D.angularVelocity = Random.Range(-360, 360);
         bc2D.isTrigger = true;
         isDying = true;
+        
     }
 
     void OnBecameVisible(){
