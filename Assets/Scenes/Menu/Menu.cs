@@ -128,7 +128,10 @@ public class Menu : MonoBehaviour
     private void loadLevel(){
         if (page == 1){
             SceneManager.LoadSceneAsync("0_Tutorial");
-        }  
+        }
+        if (page == 2){
+            SceneManager.LoadSceneAsync("1_Level");
+        }
     }
 
     private void flipPageFordwards(ClickEvent clickEvent){

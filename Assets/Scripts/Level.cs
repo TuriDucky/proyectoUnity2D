@@ -8,6 +8,7 @@ using Image = UnityEngine.UI.Image;
 public class Level : MonoBehaviour
 {
     LevelData level;
+    public int levelNumber; // 0 = Tutorial, 1 = Level1
 
     public TMP_Text timerUI;
     public TMP_Text pointsUI;
@@ -20,11 +21,19 @@ public class Level : MonoBehaviour
     int segundos;
     int decimas;
 
+    bool colorChecked;
+
     public Image moneda1;
     public Image moneda2;
     public Image moneda3;
     public Image moneda4;
     public Image moneda5;
+
+    public Image moneda1Transparent;
+    public Image moneda2Transparent;
+    public Image moneda3Transparent;
+    public Image moneda4Transparent;
+    public Image moneda5Transparent;
 
     public Image moneda1Blank;
     public Image moneda2Blank;
@@ -34,7 +43,13 @@ public class Level : MonoBehaviour
 
     void Start()
     {
-        level = GameData.getTutorial();
+        if (levelNumber == 0){
+            level = GameData.getTutorial();
+        }
+        else if (levelNumber == 1){
+            level = GameData.getLevel1();
+        }
+        
         loadlevel();
         addScore(0);
     }
@@ -42,26 +57,32 @@ public class Level : MonoBehaviour
     private void loadlevel(){
         if (level.getItem1()){
             moneda1Blank.enabled = false;
-            moneda1.enabled = true;
+            moneda1.enabled = false;
+            moneda1Transparent.enabled = true;
         }
         if (level.getItem2()){
             moneda2Blank.enabled = false;
-            moneda2.enabled = true;
+            moneda2.enabled = false;
+            moneda2Transparent.enabled = true;
         }
         if (level.getItem3()){
             moneda3Blank.enabled = false;
-            moneda3.enabled = true;
+            moneda3.enabled = false;
+            moneda3Transparent.enabled = true;
         }
         if (level.getItem4()){
             moneda4Blank.enabled = false;
-            moneda4.enabled = true;
+            moneda4.enabled = false;
+            moneda4Transparent.enabled = true;
         }
         if (level.getItem5()){
             moneda5Blank.enabled = false;
-            moneda5.enabled = true;
+            moneda5.enabled = false;
+            moneda5Transparent.enabled = true;
         }
         
     }
+    
 
     void Update()
     {
@@ -82,26 +103,31 @@ public class Level : MonoBehaviour
             case 1:
                 level.setItem1(true);
                 moneda1Blank.enabled = false;
+                moneda1Transparent.enabled = false;
                 moneda1.enabled = true;
                 break;
             case 2:
                 level.setItem2(true);
                 moneda2Blank.enabled = false;
+                moneda2Transparent.enabled = false;
                 moneda2.enabled = true;
                 break;
             case 3:
                 level.setItem3(true);
                 moneda3Blank.enabled = false;
+                moneda3Transparent.enabled = false;
                 moneda3.enabled = true;
                 break;
             case 4:
                 level.setItem4(true);
                 moneda4Blank.enabled = false;
+                moneda4Transparent.enabled = false;
                 moneda4.enabled = true;
                 break;
             case 5:
                 level.setItem5(true);
                 moneda5Blank.enabled = false;
+                moneda5Transparent.enabled = false;
                 moneda5.enabled = true;
                 break;
         }

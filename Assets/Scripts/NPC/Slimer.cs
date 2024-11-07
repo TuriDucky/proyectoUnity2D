@@ -77,13 +77,13 @@ public class Slimer : MonoBehaviour
         }
         
         if(isStatic){
-            var playerDirection = transform.InverseTransformPoint(patroll.getplayer().transform.position);
-            if (playerDirection.x > 0){
-                sr.flipX = true;
-            }
-            else{
-                sr.flipX = false;
-            }
+            //var playerDirection = transform.InverseTransformPoint(patroll.getplayer().transform.position);
+            //if (playerDirection.x > 0){
+            //    sr.flipX = true;
+            //}
+            //else{
+            //    sr.flipX = false;
+            //}
         }
         else{
             if (rb2D.velocity.x > 0){

@@ -40,9 +40,7 @@ public class Land : MonoBehaviour
         if (collider2D.tag == "Enemy"){
             transform.parent.GetComponent<Player>().hitEnemy();
         }
-        
-        
-    }
 
-  
+    }
+ 
 }

@@ -28,10 +28,10 @@ public class Wobbling : MonoBehaviour
         }
 
         if (goingUp){
-            ySpeed = ySpeed + force * acceleration;
+            ySpeed = ySpeed + force * acceleration * Time.deltaTime;
         }
         else{
-            ySpeed = ySpeed - force * acceleration;
+            ySpeed = ySpeed - force * acceleration * Time.deltaTime;
         }
 
         rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);

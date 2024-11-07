@@ -49,6 +49,11 @@ public class Vultorturer : MonoBehaviour
         generic.setPoints(pointValue);
         generic.setLives(lives);
 
+        if (isStatic){
+            
+            rb2D.constraints = RigidbodyConstraints2D.FreezeAll;
+            animator.SetBool("Fly", true);
+        }
     }
 
     // Update is called once per frame
@@ -81,6 +86,7 @@ public class Vultorturer : MonoBehaviour
             }
         }
         
+        
         if (isDying)
         {
             if (!isVisible)
@@ -104,60 +110,64 @@ public class Vultorturer : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isDying && !isStatic)
+        if (!isDying)
         {
-            if (hasDetectedPlayer)
-            {
-
-                float above;
-
-                if (isAttacking)
+            if (!isStatic){
+                if (hasDetectedPlayer)
                 {
-                    above = 0;
-                }
-                else
-                {
-                    above = 5;
-                }
 
-                if (transform.position.y - above < player.y)
-                {
-                    ySpeed += yAccel;
-                    if (ySpeed > maxYSpeed)
+                    float above;
+
+                    if (isAttacking)
                     {
-                        ySpeed = maxYSpeed;
+                        above = 0;
                     }
-                }
-                else
-                {
-                    ySpeed -= yAccel;
-                    if (ySpeed < -maxYSpeed)
+                    else
                     {
-                        ySpeed = -maxYSpeed;
+                        above = 5;
                     }
-                }
 
-                if (transform.position.x < player.x)
-                {
-                    sr.flipX = false;
-                    xSpeed += xAccel;
-                    if (xSpeed > maxXSpeed)
+                    if (transform.position.y - above < player.y)
                     {
-                        xSpeed = maxXSpeed;
+                        ySpeed += yAccel;
+                        if (ySpeed > maxYSpeed)
+                        {
+                            ySpeed = maxYSpeed;
+                        }
                     }
-                }
-                else
-                {
-                    sr.flipX = true;
-                    xSpeed -= xAccel;
-                    if (xSpeed < -maxXSpeed)
+                    else
                     {
-                        xSpeed = -maxXSpeed;
+                        ySpeed -= yAccel;
+                        if (ySpeed < -maxYSpeed)
+                        {
+                            ySpeed = -maxYSpeed;
+                        }
                     }
-                }
 
-                rb2D.velocity = new Vector2(xSpeed, ySpeed);
+                    if (transform.position.x < player.x)
+                    {
+                        sr.flipX = false;
+                        xSpeed += xAccel;
+                        if (xSpeed > maxXSpeed)
+                        {
+                            xSpeed = maxXSpeed;
+                        }
+                    }
+                    else
+                    {
+                        sr.flipX = true;
+                        xSpeed -= xAccel;
+                        if (xSpeed < -maxXSpeed)
+                        {
+                            xSpeed = -maxXSpeed;
+                        }
+                    }
+
+                    rb2D.velocity = new Vector2(xSpeed, ySpeed);
+                }
             }
+            
+            
         }
         else
         {
@@ -190,6 +200,7 @@ public class Vultorturer : MonoBehaviour
 
     public void Death()
     {
+        rb2D.constraints = RigidbodyConstraints2D.None;
         if(!isDying){
             animator.SetBool("Fly", false);
             GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);

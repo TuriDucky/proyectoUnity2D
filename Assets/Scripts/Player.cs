@@ -81,6 +81,8 @@ public class Player : MonoBehaviour
 
         updateTimers();
 
+        
+
         //Detecta e ultimo boton de direccion que el jugador haya pulsado (siempre que no este dasheando)
         if (!isDashing && playerHasControl)
         {
@@ -546,19 +548,25 @@ public class Player : MonoBehaviour
     {
         GameObject stomp = Instantiate(StompPrefab, transform.position, Quaternion.identity);
         stomp.transform.parent = gameObject.transform;
+        gameObject.layer = LayerMask.NameToLayer("Enemy Inmune");
     }
 
     void land()
     {
         Instantiate(LandPrefab, transform.position, Quaternion.identity);
+        gameObject.layer = LayerMask.NameToLayer("Default");
     }
 
     public void hitEnemy()
     {
-        if (lastKeyPressed == 's' && !GroundCheck.isGrounded)
+        comboRebote++;
+        if (lastKeyPressed == 's' && !GroundCheck.isGrounded && !downSlam)
         {
+            
             rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
-            comboRebote++;
+            if (dashCountCounter < 1){
+                dashCountCounter ++;
+            }
         }
 
     }

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8044323429656680265}
   - component: {fileID: 2251457817419591501}
   - component: {fileID: 2706125256506177778}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Slimer
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -221,6 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDying: 0
   pointValue: 0
+  lives: 1
 --- !u!1 &2886872694650648687
 GameObject:
   m_ObjectHideFlags: 0

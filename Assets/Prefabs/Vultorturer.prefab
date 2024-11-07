@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6951362289823889376}
   - component: {fileID: 2454063569410817920}
   - component: {fileID: 3694769747340974222}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Vultorturer
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -225,6 +225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDying: 0
   pointValue: 0
+  lives: 1
 --- !u!1 &5743708147868839552
 GameObject:
   m_ObjectHideFlags: 0

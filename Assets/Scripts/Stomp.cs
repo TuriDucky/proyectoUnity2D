@@ -56,7 +56,5 @@ public class Stomp : MonoBehaviour
         posicion.y -= 1;
         posicion.x += 0.2f;
         transform.position = posicion;
-        
-  
     }
 }
