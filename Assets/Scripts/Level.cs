@@ -41,6 +41,9 @@ public class Level : MonoBehaviour
     public Image moneda4Blank;
     public Image moneda5Blank;
 
+
+    public AudioSource pickUp;
+
     void Start()
     {
         if (levelNumber == 0){
@@ -97,6 +100,7 @@ public class Level : MonoBehaviour
     }
 
     public void colectCoin(int number){
+        pickUp.Play();
         addDisplayScore(10000);
         coinScore += 10000;
         switch(number){

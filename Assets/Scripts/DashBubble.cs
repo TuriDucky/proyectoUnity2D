@@ -5,6 +5,7 @@ public class DashBubble : MonoBehaviour
 {
     
     GameObject player;
+    public AudioSource popSFX;
     public float vectorLenght;
     public bool lockAxis;
     
@@ -13,8 +14,10 @@ public class DashBubble : MonoBehaviour
         player = GameObject.Find("Player");
     }
 
-    
+    // La logica de esta brbuja es la misma que la otra, solo que en vel de impulsar
+    // al jugador en la direcion opuesta, impulsa al jugador hacia donde apunta.
     public void bubbleBlast(Vector3 bubblePos){
+        popSFX.Play();
         
         player.GetComponent<Player>().isDashing = false;
         player.GetComponent<Player>().dashCountCounter = 1;
@@ -73,5 +76,9 @@ public class DashBubble : MonoBehaviour
         player.GetComponent<Player>().xSpeed = Mathf.Round(newX);
         player.GetComponent<Player>().rb2D.velocity = new Vector2(newX, newY);
 
+    }
+
+    public void setVector (int lenght){
+        vectorLenght = lenght;
     }
 }

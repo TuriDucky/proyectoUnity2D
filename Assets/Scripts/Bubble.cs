@@ -6,6 +6,7 @@ using UnityEngine;
 public class Bubble : MonoBehaviour
 {
     GameObject player;
+    public AudioSource popSFX;
     public float vectorLenght;
     public bool lockAxis;
     
@@ -14,8 +15,12 @@ public class Bubble : MonoBehaviour
         player = GameObject.Find("Player");
     }
 
-    
+    // Las burbujas empujan al jugador al lado opuesto desde donde ha sido golpeado. El siguiente
+    // metodo calcula el vector que realizan la posicion del jugador y la posicion e la burbuja, y 
+    // le da la longitud (fuerza) del parametro vectorLenght. Si la opcion de lockAxis esta activada,
+    // la burbuja solo impulsara en las cuatro direciones cardinales (y diagonalmente si el jugador es muy preciso)
     public void bubbleBlast(Vector3 bubblePos){
+        popSFX.Play();
         
         player.GetComponent<Player>().isDashing = false;
         player.GetComponent<Player>().dashCountCounter = 1;

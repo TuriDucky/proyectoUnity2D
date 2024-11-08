@@ -9,6 +9,7 @@ public class MinotaurPlayerDetection : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collider2D){
         if (collider2D.tag == "Player"){
             hasDetecedPlayer = true;
+            Minotaur.idle = false;
         }
     }
 
@@ -16,5 +17,9 @@ public class MinotaurPlayerDetection : MonoBehaviour
         if (collider2D.tag == "Player"){
             hasDetecedPlayer = false;
         }
+    }
+
+    public void disable(){
+        GetComponent<BoxCollider2D>().enabled = false;
     }
 }

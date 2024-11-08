@@ -17,6 +17,10 @@ public class Slimer : MonoBehaviour
     public bool isStatic;
 
 
+    public AudioSource attackSFX;
+    public AudioSource deathSFX;
+
+
     Rigidbody2D rb2D;
     SpriteRenderer sr;
     BoxCollider2D bc2D;
@@ -24,7 +28,7 @@ public class Slimer : MonoBehaviour
     EnemyPatroll patroll;
     Enemy generic;
     void Start()
-    {   
+    {
         isDying = false;
         roamCounter = 0;
         rb2D = GetComponent<Rigidbody2D>();
@@ -39,19 +43,25 @@ public class Slimer : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {      
-        if(!isStatic){
-            if (roamCounter <= 0){
+    {
+        if (!isStatic)
+        {
+            if (roamCounter <= 0)
+            {
                 roamCounter = roamValue;
-                if (isMoving){
+                if (isMoving)
+                {
                     isMoving = false;
                 }
-                else{
+                else
+                {
                     isMoving = true;
-                    if (direction == 1){
+                    if (direction == 1)
+                    {
                         direction = 0;
                     }
-                    else{
+                    else
+                    {
                         direction = 1;
                     }
                 }
@@ -59,109 +69,128 @@ public class Slimer : MonoBehaviour
             roamCounter -= Time.deltaTime;
         }
 
-        if (isDying){
-            if (!isVisible){
+        if (isDying)
+        {
+            if (!isVisible)
+            {
                 deathCounter -= Time.deltaTime;
             }
-            if (deathCounter <= 0){
+            if (deathCounter <= 0)
+            {
                 Destroy(gameObject);
             }
         }
-        else{
-            if (transform.GetChild (1).GetComponent<SlimerAttack>().getPlayer()){
+        else
+        {
+            if (transform.GetChild(1).GetComponent<SlimerAttack>().getPlayer())
+            {
+                attackSFX.Play();
                 animator.SetBool("isAttacking", true);
             }
-            else{
+            else
+            {
                 animator.SetBool("isAttacking", false);
             }
         }
-        
-        if(isStatic){
-            //var playerDirection = transform.InverseTransformPoint(patroll.getplayer().transform.position);
-            //if (playerDirection.x > 0){
-            //    sr.flipX = true;
-            //}
-            //else{
-            //    sr.flipX = false;
-            //}
+
+
+        if (rb2D.velocity.x > 0)
+        {
+            sr.flipX = true;
         }
-        else{
-            if (rb2D.velocity.x > 0){
-                sr.flipX = true;
-            }
-            else{
-                sr.flipX = false;
-            }
+        else
+        {
+            sr.flipX = false;
         }
-        
+
+
     }
 
-    void FixedUpdate(){
-        if(!isDying){
-            if(!isStatic){
-                if (!patroll.getDetected()){
-                    if (isMoving){
-                        if (direction == 1){
+    void FixedUpdate()
+    {
+        if (!isDying)
+        {
+            if (!isStatic)
+            {
+                if (!patroll.getDetected())
+                {
+                    if (isMoving)
+                    {
+                        if (direction == 1)
+                        {
                             rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
                         }
-                        if (direction == 0){
+                        if (direction == 0)
+                        {
                             rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
                         }
                     }
                 }
-                else{
+                else
+                {
                     roamCounter = 1;
                     isMoving = true;
-                    var direction = transform.InverseTransformPoint(patroll.getplayer().transform.position); 
-                
-                    if (direction.x > 0){
-                        rb2D.velocity = new Vector2 (xRunSpeed , rb2D.velocity.y);
+                    var direction = transform.InverseTransformPoint(patroll.getplayer().transform.position);
+
+                    if (direction.x > 0)
+                    {
+                        rb2D.velocity = new Vector2(xRunSpeed, rb2D.velocity.y);
                     }
-                    if (direction.x < 0){
-                        rb2D.velocity = new Vector2 (-xRunSpeed , rb2D.velocity.y);
+                    if (direction.x < 0)
+                    {
+                        rb2D.velocity = new Vector2(-xRunSpeed, rb2D.velocity.y);
                     }
                 }
             }
-            
+
         }
-        else{
+        else
+        {
             rb2D.velocity = new Vector2(deathDirection, rb2D.velocity.y);
         }
-            
 
-        
+
+
     }
 
-    private void OnCollisionEnter2D(Collision2D collision2D){
-        
-    }
+    private void OnTriggerEnter2D(Collider2D collider2D)
+    {
+        if (collider2D.gameObject.CompareTag("Attack"))
+        {
+            Death();
+        }
 
-    private void OnTriggerEnter2D(Collider2D collider2D){
-        if (collider2D.gameObject.CompareTag("Attack")){
+        if (collider2D.gameObject.CompareTag("Big Attack"))
+        {
             Death();
         }
     }
 
 
-    public void Death(){
-        if (!isDying){
+    public void Death()
+    {
+        deathSFX.Play();
+        if (!isDying)
+        {
             animator.SetBool("isAttacking", false);
             GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
         }
-        
+
         rb2D.constraints = RigidbodyConstraints2D.None;
         deathDirection = Random.Range(-4, 4);
         rb2D.velocity = new Vector2(deathDirection, 15);
         rb2D.angularVelocity = Random.Range(-360, 360);
         bc2D.isTrigger = true;
         isDying = true;
-        
+
     }
 
-    void OnBecameVisible(){
+    void OnBecameVisible()
+    {
         isVisible = true;
     }
-    void OnBecameInvisible(){
+    void OnBecameInvisible()
+    {
         isVisible = false;
     }
 }

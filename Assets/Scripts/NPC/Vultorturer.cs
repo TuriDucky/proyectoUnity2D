@@ -28,6 +28,9 @@ public class Vultorturer : MonoBehaviour
     public bool isStatic;
 
 
+    public AudioSource attackSFX;
+    public AudioSource hitSFX;
+    public AudioSource deathSFX;
     Vector3 player;
     Rigidbody2D rb2D;
     SpriteRenderer sr;
@@ -80,6 +83,7 @@ public class Vultorturer : MonoBehaviour
                     else
                     {
                         isAttacking = true;
+                        attackSFX.Play();
                         attackTimeCounter = attackTimeValue / 3;
                     }
                 }
@@ -104,6 +108,7 @@ public class Vultorturer : MonoBehaviour
             {
                 hasDetectedPlayer = true;
                 animator.SetBool("Fly", true);
+                attackSFX.Play();
             }
         }
     }
@@ -186,6 +191,17 @@ public class Vultorturer : MonoBehaviour
         if (collider2D.gameObject.CompareTag("Attack"))
         {
             hit();
+            if (!isStatic){
+                hitSFX.Play();
+            }
+        }
+
+        if (collider2D.gameObject.CompareTag("Big Attack"))
+        {
+            hit();
+            if (!isStatic){
+                hitSFX.Play();
+            }
         }
     }
 
@@ -211,6 +227,7 @@ public class Vultorturer : MonoBehaviour
         rb2D.angularVelocity = Random.Range(-360, 360);
         bc2D.isTrigger = true;
         isDying = true;
+        deathSFX.Play();
     }
 
     void OnBecameVisible()

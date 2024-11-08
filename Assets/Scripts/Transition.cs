@@ -15,6 +15,7 @@ public class Transition : MonoBehaviour
     public bool isOpening;
     public bool isClosing;
     public bool sceneTransition;
+    
 
 
     void Start()
@@ -57,6 +58,9 @@ public class Transition : MonoBehaviour
                 isClosing = false;
                 if (sceneTransition){
                     GameObject.Find("Level").GetComponent<Level>().endLevel();    
+                }
+                else{
+                    GameObject.Find("Player").GetComponent<Player>().Respawn();
                 }
             }
         }

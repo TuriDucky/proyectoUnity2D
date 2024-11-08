@@ -10,12 +10,14 @@ public class Minotaur : MonoBehaviour
 
     public bool isMoving;
     
+    public static bool idle;
     public bool isPlayerRight;
     public bool bigAttack;
     public bool spinAttack;
     public bool spinDash;
     public bool isStunned;
     public bool isVulnerable;
+    public bool attackStarted;
     public int wallDirection;
     public int lives;
 
@@ -30,7 +32,16 @@ public class Minotaur : MonoBehaviour
 
     public float stunTime;
     public float stunTimeValue;
+
+    public float levelEndTime;
+    public float levelEndTimeValue;
     
+    public AudioSource attackSFX;
+    public AudioSource impactSFX;
+    public AudioSource hitSFX;
+    public AudioSource deathSFX;
+    public AudioSource angrySFX;
+    public AudioSource inmuneSFX;
 
     Rigidbody2D rb2D;
     SpriteRenderer sr;
@@ -39,6 +50,7 @@ public class Minotaur : MonoBehaviour
     
     void Start()
     {   
+        idle = true;
         spinAttackTime = spinAttackTimeValue;
         wallDirection = Random.Range(0,2);
         
@@ -51,10 +63,23 @@ public class Minotaur : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        checkPlayerPos();
-        updateTimers();
+        if(!idle){
+            checkPlayerPos();
+            updateTimers();
+        }
+        else{
+            animator.SetBool("bigAttack", false);
+            if (levelEndTime > 0){
+                levelEndTime -= Time.deltaTime;
+            }
+            if (levelEndTime < 0){
+                GameObject.Find("transition").GetComponent<Transition>().close(true);
+            }
+            
+        }
+        
 
-        if (!isStunned){
+        if (!isStunned && !idle){
             if (MinotaurPlayerDetection.hasDetecedPlayer && !spinAttack && !spinDash){
                 isMoving = false;
                 bigAttack = true;
@@ -82,7 +107,7 @@ public class Minotaur : MonoBehaviour
     }
 
     void FixedUpdate(){
-        if (!isStunned){
+        if (!isStunned && !idle){
             if (isMoving && !spinAttack && !spinDash){
                 if (isPlayerRight){
                     rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
@@ -116,12 +141,18 @@ public class Minotaur : MonoBehaviour
     }
 
     void BigAttack(){
+        if (!attackStarted){
+            attackSFX.Play();
+        }
+        attackStarted = true;
         animator.SetBool("bigAttack", true);
         if (isPlayerRight){
             sr.flipX = false;
+            GameObject.Find("minotaurSlashRight").GetComponent<PolygonCollider2D>().enabled = true;
         }
         else{
             sr.flipX = true;
+            GameObject.Find("minotaurSlashLeft").GetComponent<PolygonCollider2D>().enabled = true;
         }
     }
 
@@ -142,22 +173,30 @@ public class Minotaur : MonoBehaviour
 
     void updateTimers(){
         if(!isStunned){
-            if (dashStartDelay > 0){
-                dashStartDelay -=Time.deltaTime;
-            }
-            else{
-                dashStartDelay = 0;
-            }
+                if (dashStartDelay > 0){
+                    dashStartDelay -=Time.deltaTime;
+                }
+                else{
+                    dashStartDelay = 0;
+                }
 
             if (bigAttackTime > 0){
                 bigAttackTime -= Time.deltaTime;
                 isMoving = false;
             }
+            if (bigAttackTime < 1){
+                GameObject.Find("minotaurSlashRight").GetComponent<PolygonCollider2D>().enabled = false;
+                GameObject.Find("minotaurSlashLeft").GetComponent<PolygonCollider2D>().enabled = false;
+            }
             if (bigAttackTime < 0){
                 animator.SetBool("bigAttack", false);
                 bigAttack = false;
+                attackStarted = false;
+
                 isMoving = true;
             }
+
+
 
             if (!spinDash && !isStunned){
                 if (spinAttackTime > 0 && !spinAttack){
@@ -185,43 +224,72 @@ public class Minotaur : MonoBehaviour
     }
 
     public void hurt(){
+        inmuneSFX.Stop();
+        hitSFX.Play();
         isVulnerable = false;
         lives --;
         if (lives <= 0){
-            Destroy(gameObject);
+            hitSFX.Stop();
+            deathSFX.Play();
+            levelEndTime = levelEndTimeValue;
+            idle = true;
+            animator.SetBool("death", true);
+            gameObject.layer = 6;
+            GetComponentInChildren<MinotaurPlayerDetection>().disable();
         }
     }
+
 
     private void OnCollisionEnter2D(Collision2D collision2D){
         if (collision2D.collider.tag == "Wall"){
             if (spinDash){
+                impactSFX.Play();
                 spinDash = false;
+                GameObject.Find("dashAttack").GetComponent<PolygonCollider2D>().enabled = false;
                 animator.SetBool("SpinAttack", false);
                 isStunned = true;
                 isVulnerable = true;
                 animator.SetBool("isStunned", true);
                 stunTime = stunTimeValue;
-                rb2D.velocity = new Vector2(2, 5);
+                if (collision2D.transform.position.x > transform.position.x){
+                    rb2D.velocity = new Vector2(-2, 5);
+                }
+                else{
+                    rb2D.velocity = new Vector2(2, 5);
+                }
+                
             }
             if (spinAttack){
+                angrySFX.Play();
                 checkPlayerPos();
                 spinAttack = false;
                 spinDash = true;
+                GameObject.Find("dashAttack").GetComponent<PolygonCollider2D>().enabled = true;
+                
                 animator.SetBool("SpinAttack", true);
                 animator.SetBool("bigAttack", false);
                 animator.SetBool("isRunning", false);
                 dashStartDelay = dashStartDelayValue; 
             } 
-        }
-
-        
+        }    
     }
 
     private void OnTriggerEnter2D(Collider2D colider){
         if (colider.tag == "Attack"){
-            Debug.Log("fsadf");
             if (isVulnerable){
                 hurt();
+            }
+            else{
+                inmuneSFX.Play();
+            }
+        }
+
+        if (colider.tag == "Big Attack"){
+            if (isVulnerable){
+                hurt();
+            }
+            else{
+                inmuneSFX.Play();
             }
         }
     }

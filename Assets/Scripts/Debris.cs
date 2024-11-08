@@ -6,6 +6,9 @@ public class Debris : MonoBehaviour
 {
     public int numParticles;
     public int direccionEscombros;
+    public bool needBigAttack;
+
+    public AudioSource breakSFX;
 
     public GameObject particle1;
     public GameObject particle2;
@@ -15,12 +18,23 @@ public class Debris : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision2D){
         
         if (collision2D.tag == "Attack"){
-            createParticles();
-            Destroy(gameObject);
+            if (!needBigAttack){
+                createParticles();
+                GetComponent<SpriteRenderer>().enabled = false;
+                GetComponent<BoxCollider2D>().enabled = false;
+            } 
         }
+
+        if (collision2D.tag == "Big Attack"){
+            createParticles();
+            GetComponent<SpriteRenderer>().enabled = false;
+            GetComponent<BoxCollider2D>().enabled = false; 
+        }
+        
     }
 
     private void createParticles(){
+        breakSFX.Play();
         while (numParticles > 0){
             numParticles --;
             int particula = Random.Range(0,4);

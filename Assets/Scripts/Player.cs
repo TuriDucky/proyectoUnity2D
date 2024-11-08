@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     public bool isDashing; //Es true cuando se esta dahseando, false cuando no
     public bool dashStartedGround; //true si la accion de dash comienza en el suelo
     public bool isHit; //Cuando un ememigo lo golpea, sera true
-    public bool isRespawning;
     public bool downSlam;
     public bool animationJump;
     public bool playerHasControl;
@@ -42,14 +41,19 @@ public class Player : MonoBehaviour
     public float knockbackTimeValue; //Tiempo de knockback (Valor por defecto: 0.5)
     public float knockbackTimeCounter;
 
-    public float respawnTimeValue;
-    public float respawnTimeCounter;
-
     public float slamStartTimeValue;
     public float slamStartTimeCounter;
 
     public float iFramesValue;
     public float iFramesCounter;
+
+    public AudioSource jumpSFX;
+    public AudioSource fireSFX;
+    public AudioSource landSFX;
+    public AudioSource stompSFX;
+    public AudioSource dashSFX;
+    public AudioSource hurtSFX;
+
 
 
     public Vector3 lastCheckpoint; //Las cordenadas del ultimo checkpoint visitado
@@ -81,7 +85,7 @@ public class Player : MonoBehaviour
 
         updateTimers();
 
-        
+
 
         //Detecta e ultimo boton de direccion que el jugador haya pulsado (siempre que no este dasheando)
         if (!isDashing && playerHasControl)
@@ -157,6 +161,7 @@ public class Player : MonoBehaviour
             slashDelayCounter = knockbackTimeValue / 2;
             if (lastKeyPressed != 's')
             {
+                dashSFX.Play();
                 isDashing = true;
                 animator.SetBool("isDashing", true);
                 if (GroundCheck.isGrounded)
@@ -374,6 +379,7 @@ public class Player : MonoBehaviour
                 }
             }
 
+            // Movimiento horizontal del personaje en caso de no recivir imputs
             else
             {
                 animator.SetBool("isRunning", false);
@@ -421,10 +427,13 @@ public class Player : MonoBehaviour
                 {
                     if (Input.GetKey(KeyCode.Space))
                     {
+                        if (!isJumping)
+                        {
+                            jumpSFX.Play();
+                        }
                         jumpTimeCounter = jumpTimeValue;
                         isJumping = true;
                         rb2D.velocity = new Vector2(rb2D.velocity.x, ySpeed);
-
                     }
                 }
             }
@@ -470,17 +479,6 @@ public class Player : MonoBehaviour
             slamStartTimeCounter = 0;
         }
 
-        // Tiempo para respawnear
-        if (respawnTimeCounter > 0)
-        {
-            respawnTimeCounter -= Time.deltaTime;
-
-            if (respawnTimeCounter <= 0)
-            {
-                respawnTimeCounter = 0;
-            }
-        }
-
         //Temporizador para el tiempo entre ataques
         if (slashDelayCounter > 0)
         {
@@ -516,14 +514,16 @@ public class Player : MonoBehaviour
             iFramesCounter = 0;
             if (lives <= 0)
             {
-                Respawn();
+                GameObject.Find("transition").GetComponent<Transition>().close(false);
             }
         }
     }
 
-
+    // Metodo del ataque del jugador. Inicializa el prefab del ataque, y lo
+    //posiciona adecuadamente depende de la ultima tecla de direccion presionada
     void slash()
     {
+        fireSFX.Play();
         GameObject slash = Instantiate(SlashPrefab, transform.position, Quaternion.identity);
         slash.transform.parent = gameObject.transform;
 
@@ -544,38 +544,52 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Inicializa el ataque hacia abajo del personaje. Crea el objeto de ataque, y mueve al
+    // jugador a una capa en la que los enemigos no le afectan, para evitar problemas.
     void stomp()
     {
+        stompSFX.Play();
         GameObject stomp = Instantiate(StompPrefab, transform.position, Quaternion.identity);
         stomp.transform.parent = gameObject.transform;
         gameObject.layer = LayerMask.NameToLayer("Enemy Inmune");
     }
 
+    //Cuando aterriza el personaje de un ataque hacia abajo, se crea el trigger de ataque de
+    //aterrizaje y devuelve al jugador a un estado normal.
     void land()
     {
+        stompSFX.Stop();
+        landSFX.Play();
         Instantiate(LandPrefab, transform.position, Quaternion.identity);
         gameObject.layer = LayerMask.NameToLayer("Default");
     }
 
+    // El metodo se llama cuando un enemigo es golpeado por un ataque del jugador. En caso de
+    // golpearlo con un ataque hacia abajo, dara un pequeño inpulso hacia arriba al jugador
     public void hitEnemy()
     {
         comboRebote++;
         if (lastKeyPressed == 's' && !GroundCheck.isGrounded && !downSlam)
         {
-            
+
             rb2D.velocity = new Vector2(rb2D.velocity.x, 20);
-            if (dashCountCounter < 1){
-                dashCountCounter ++;
+            if (dashCountCounter < 1)
+            {
+                dashCountCounter++;
             }
         }
 
     }
 
+    // El metodo es llamado cuando el jugador entra en un checkpoint y guarda las cordenadas de este
     public void setCheckpoint(Vector3 newCheckpoint)
     {
         lastCheckpoint = newCheckpoint;
     }
 
+    // El metodo es llamado cuando el jugador muere o cae en un abismo. Si habia muerto, le restablezce
+    // los puntosd e vida, y teletransporta el jugador al ultimo checkpoint que ha tocado. Tambien realiza
+    // la transicion de nivel de abrirse
     public void Respawn()
     {
         if (lives <= 0)
@@ -588,6 +602,9 @@ public class Player : MonoBehaviour
         playerHasControl = true;
         rb2D.velocity = new Vector2(0, 0);
         xSpeed = 0;
+
+        GameObject.Find("transition").GetComponent<Transition>().open();
+        
     }
 
     public void setStomp(bool stomp)
@@ -595,33 +612,53 @@ public class Player : MonoBehaviour
         downSlam = stomp;
     }
 
-    public void beenHit(Collision2D coll)
+    // El metodo es llamado cuando el jugador sufre daño. Le reduce un punto de vida, y restablece
+    // varios estados del jugador. tambin le da un pequeño inpulso hacia atras, y unos frames de invencibilidad.
+    public void beenHit(Collider2D coll)
     {
+        hurtSFX.Play();
         lives--;
         animator.SetBool("isDashing", false);
         isDashing = false;
         dashCountCounter = 0;
         animator.SetBool("isHit", true);
-        if (coll.transform.position.x > transform.position.x){
+        if (coll.transform.position.x > transform.position.x)
+        {
             xSpeed = -15;
         }
-        else{
+        else
+        {
             xSpeed = 15;
         }
-        
+
         rb2D.velocity = new Vector2(xSpeed, 10);
         iFramesCounter = iFramesValue;
     }
 
+    // Logica de cuando el jugador muere. Este pierde el control y la animacion de muerte
+    // empieza. Tras un rato, la transicion de cierre empieza y el jugador respawnea (logica en
+    // el metodo de actualizar temporizadores)
     public void death()
     {
         animator.SetBool("death", true);
         playerHasControl = false;
+        Minotaur.idle = true;
     }
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.collider.tag == "Enemy")
+        if (coll.collider.tag == "Enemy") //Detectar si colisiona con un enemigo
+        {
+            if (iFramesCounter <= 0) //Comprobar si el jugador es inmune
+            {
+                beenHit(coll.collider);
+            }
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D coll)
+    {
+        if (coll.tag == "Minotaur Attack") //Misma logica que arriba
         {
             if (iFramesCounter <= 0)
             {

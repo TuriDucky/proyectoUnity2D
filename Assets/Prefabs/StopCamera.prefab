@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3069402583603953257}
   - component: {fileID: 4466870874180034126}
   - component: {fileID: 3375052788208859492}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: StopCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}

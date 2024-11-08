@@ -11,11 +11,14 @@ public class Menu : MonoBehaviour
     UIDocument menu;
     int page;
     int numPages = 2;
+
+    public AudioSource playSFX;
+    public AudioSource arrowSFX;
+    public AudioSource music;
     
     Button play;
     Button back;
     Button next;
-    Button exit;
     Label levelName;
     Label score;
     Label time;
@@ -60,7 +63,6 @@ public class Menu : MonoBehaviour
         play = root.Q<Button>("play");
         back = root.Q<Button>("back"); 
         next = root.Q<Button>("next");
-        exit = root.Q<Button>("exit");
 
         levelName = root.Q<Label>("levelName");
         score = root.Q<Label>("score"); 
@@ -110,6 +112,13 @@ public class Menu : MonoBehaviour
         loadPage();
         if (trasitionTimeCounter > 0){
             trasitionTimeCounter -= Time.deltaTime;
+            if (music.volume > 0){
+                music.volume -= Time.deltaTime;
+            }
+            else{
+                music.volume = 0;
+            }
+            
             if(trasitionTimeCounter <= 0){
                 loadLevel();
             }
@@ -120,7 +129,7 @@ public class Menu : MonoBehaviour
         transition.RemoveFromClassList("transition_start");
     }
     private void transitionEnd(ClickEvent clickEvent){
-        
+        playSFX.Play();
         transition.AddToClassList("transition_start");
         trasitionTimeCounter = trasitionTimeValue;
     }
@@ -135,6 +144,7 @@ public class Menu : MonoBehaviour
     }
 
     private void flipPageFordwards(ClickEvent clickEvent){
+        arrowSFX.Play();
         page ++;
 
         if (page >= numPages){
@@ -154,6 +164,7 @@ public class Menu : MonoBehaviour
     }
 
     private void flipPageBackwards(ClickEvent clickEvent){
+        arrowSFX.Play();
         page --;
 
         if (page >= numPages){
