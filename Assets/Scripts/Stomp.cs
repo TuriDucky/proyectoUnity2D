@@ -20,7 +20,7 @@ public class Stomp : MonoBehaviour
     void FixedUpdate()
     {
         ajustarPosicion();
-        lifeCounter --;
+        lifeCounter -= Time.deltaTime;
         if (lifeCounter <= 0){
             Destroy(gameObject);
         }

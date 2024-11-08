@@ -214,6 +214,8 @@ MonoBehaviour:
   isVisible: 0
   pointValue: 0
   isStatic: 0
+  redTime: 0
+  redTimeValue: 0.2
   attackSFX: {fileID: 2939363321502981073}
   hitSFX: {fileID: 6142797281462948289}
   deathSFX: {fileID: 6391645379774899883}

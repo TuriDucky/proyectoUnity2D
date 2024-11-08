@@ -17,12 +17,6 @@ public class BackgroundParallax : MonoBehaviour
         lenght = GetComponent<SpriteRenderer>().bounds.size.x;
         
     }
-
-    
-    void Update()
-	{
-		
-	}
     
     void FixedUpdate()
     {

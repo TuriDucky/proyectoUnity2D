@@ -610,6 +610,9 @@ public class Player : MonoBehaviour
     public void setStomp(bool stomp)
     {
         downSlam = stomp;
+        if (!stomp){
+            gameObject.layer = LayerMask.NameToLayer("Default");
+        }
     }
 
     // El metodo es llamado cuando el jugador sufre daño. Le reduce un punto de vida, y restablece
@@ -664,6 +667,10 @@ public class Player : MonoBehaviour
             {
                 beenHit(coll);
             }
+        }
+
+        if (coll.tag == "Finish"){
+            playerHasControl = false;
         }
     }
 }

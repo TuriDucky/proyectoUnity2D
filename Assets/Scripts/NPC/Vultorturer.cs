@@ -26,11 +26,17 @@ public class Vultorturer : MonoBehaviour
     public bool isVisible;
     public int pointValue;
     public bool isStatic;
+    public float redTime;
+    public float redTimeValue;
 
 
     public AudioSource attackSFX;
     public AudioSource hitSFX;
     public AudioSource deathSFX;
+
+    Color redColor;
+    Color defaultColor;
+
     Vector3 player;
     Rigidbody2D rb2D;
     SpriteRenderer sr;
@@ -51,6 +57,14 @@ public class Vultorturer : MonoBehaviour
         generic = GetComponent<Enemy>();
         generic.setPoints(pointValue);
         generic.setLives(lives);
+
+        defaultColor = sr.color;
+
+        redColor = new Color();
+        redColor.r = 255;
+        redColor.g = 0;
+        redColor.b = 0;
+        redColor.a = 255;
 
         if (isStatic){
             
@@ -111,6 +125,18 @@ public class Vultorturer : MonoBehaviour
                 attackSFX.Play();
             }
         }
+
+        if (redTime > 0){
+            redTime -= Time.deltaTime;
+            if (redTime < 0){
+                if (!isDying){
+                    sr.color = defaultColor;
+                }
+                
+                redTime = 0;
+            }
+        }
+
     }
 
     void FixedUpdate()
@@ -181,11 +207,6 @@ public class Vultorturer : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter2D(Collision2D collision2D)
-    {
-
-    }
-
     private void OnTriggerEnter2D(Collider2D collider2D)
     {
         if (collider2D.gameObject.CompareTag("Attack"))
@@ -193,6 +214,7 @@ public class Vultorturer : MonoBehaviour
             hit();
             if (!isStatic){
                 hitSFX.Play();
+                sr.color = redColor;
             }
         }
 
@@ -208,6 +230,7 @@ public class Vultorturer : MonoBehaviour
     public void hit()
     {
         lives--;
+        redTime = redTimeValue;
         if (lives <= 0)
         {
             Death();
