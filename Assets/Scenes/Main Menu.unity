@@ -195,6 +195,11 @@ MonoBehaviour:
   canvas: {fileID: 2800000, guid: 91abb152fcaf08140b75b001565db25b, type: 3}
   train: {fileID: 2800000, guid: 3e56994c7da48114b90868f73f4facb9, type: 3}
   fly: {fileID: 2800000, guid: 6eb38a10ac6aa5048b3bf9db44e1743a, type: 3}
+  ribbon: {fileID: 2800000, guid: e5cd0ba9c733eb14382d20f42eb29e86, type: 3}
+  present: {fileID: 2800000, guid: 25e867327752f554b82425821cfb7fcd, type: 3}
+  spaceship: {fileID: 2800000, guid: 7b0f0eb7fc4016345a709bf27dc2860b, type: 3}
+  parasol: {fileID: 2800000, guid: 36a13b9400971d04c893c326d339c9cd, type: 3}
+  teddy: {fileID: 2800000, guid: 9a5c14092942b6f41b25c1a160c7227e, type: 3}
   S: {fileID: 2800000, guid: 46a4dbfd649eb9a4991a04394f97e74d, type: 3}
   A: {fileID: 2800000, guid: 15d3a2bafe17ae544834d2079f32db0e, type: 3}
   B: {fileID: 2800000, guid: e0212b0281610b446a80b9f39eeec914, type: 3}
@@ -219,7 +224,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: fdfd0f8c5849320469407ecf855c9ade, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -315,7 +320,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: de322ac8dbb762a4b9a37260c25427e2, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0

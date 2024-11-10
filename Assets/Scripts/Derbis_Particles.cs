@@ -8,6 +8,7 @@ public class Derbis_Particles : MonoBehaviour
     float timer;
     int lockX; // 0 = fuerza horizontal aleatoria, 1 = fuerza a la derecha, 2 = fuerza a la izquierda, 3 = fuerza hacia abajo, 4 = no hay fuerza 
     public float maxForce;
+    public bool isVisible;
     void Start()
     {
         timer = 5;
@@ -36,7 +37,10 @@ public class Derbis_Particles : MonoBehaviour
     void Update(){
         timer -= Time.deltaTime;
         if (timer <= 0){
-            Destroy(gameObject);
+            if (!isVisible)
+            {
+                Destroy(gameObject);
+            }   
         }
     }
 
@@ -44,5 +48,14 @@ public class Derbis_Particles : MonoBehaviour
         lockX = direccion;
     }
 
-    
+    void OnBecameVisible()
+    {
+        isVisible = true;
+    }
+    void OnBecameInvisible()
+    {
+        isVisible = false;
+    }
+
+
 }

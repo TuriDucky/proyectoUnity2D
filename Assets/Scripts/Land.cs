@@ -37,9 +37,7 @@ public class Land : MonoBehaviour
             collider2D.transform.GetComponent<DashBubble>().bubbleBlast(collider2D.transform.position);
             Destroy(gameObject);
         }
-        if (collider2D.tag == "Enemy"){
-            transform.parent.GetComponent<Player>().hitEnemy();
-        }
+        
 
     }
  

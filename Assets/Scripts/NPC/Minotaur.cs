@@ -48,6 +48,7 @@ public class Minotaur : MonoBehaviour
     public AudioSource deathSFX;
     public AudioSource angrySFX;
     public AudioSource inmuneSFX;
+    public AudioSource spinSFX;
 
     Rigidbody2D rb2D;
     SpriteRenderer sr;
@@ -84,7 +85,8 @@ public class Minotaur : MonoBehaviour
         }
         else
         {
-            animator.SetBool("bigAttack", false);
+            resetMinotaur();
+            
             if (levelEndTime > 0)
             {
                 levelEndTime -= Time.deltaTime;
@@ -155,10 +157,14 @@ public class Minotaur : MonoBehaviour
                 if (wallDirection == 0)
                 {
                     rb2D.velocity = new Vector2(xSpeed, rb2D.velocity.y);
+                    isPlayerRight = true;
+                    sr.flipX = false;
                 }
                 else
                 {
                     rb2D.velocity = new Vector2(-xSpeed, rb2D.velocity.y);
+                    isPlayerRight = false;
+                    sr.flipX = true;
                 }
             }
 
@@ -310,6 +316,27 @@ public class Minotaur : MonoBehaviour
         }
     }
 
+    public void resetMinotaur()
+    {
+        Debug.Log("lefsdfihbsud");
+        idle = true;
+        isPlayerRight = false;
+        bigAttack = false;
+        spinAttack = false;
+        spinDash = false;
+        isStunned = false;
+        isVulnerable = false;
+        attackStarted = false;
+
+        animator.SetBool("bigAttack", false);
+        animator.SetBool("isStunned", false);
+        animator.SetBool("SpinAttack", false);
+
+        spinSFX.Stop();
+
+        GameObject.Find("dashAttack").GetComponent<PolygonCollider2D>().enabled = false;
+    }
+
 
     private void OnCollisionEnter2D(Collision2D collision2D)
     {
@@ -317,6 +344,7 @@ public class Minotaur : MonoBehaviour
         {
             if (spinDash)
             {
+                spinSFX.Stop();
                 impactSFX.Play();
                 spinDash = false;
                 GameObject.Find("dashAttack").GetComponent<PolygonCollider2D>().enabled = false;
@@ -338,6 +366,7 @@ public class Minotaur : MonoBehaviour
             if (spinAttack)
             {
                 angrySFX.Play();
+                spinSFX.Play();
                 checkPlayerPos();
                 spinAttack = false;
                 spinDash = true;

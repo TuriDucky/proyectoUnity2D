@@ -35,11 +35,19 @@ public class Menu : MonoBehaviour
     VisualElement background;
 
     public Texture2D missing;
+
     public Texture2D apple;
     public Texture2D ballon;
     public Texture2D canvas;
     public Texture2D train;
     public Texture2D fly;
+
+    public Texture2D ribbon;
+    public Texture2D present;
+    public Texture2D spaceship;
+    public Texture2D parasol;
+    public Texture2D teddy;
+
     public Texture2D S;
     public Texture2D A;
     public Texture2D B;
@@ -113,7 +121,7 @@ public class Menu : MonoBehaviour
         if (trasitionTimeCounter > 0){
             trasitionTimeCounter -= Time.deltaTime;
             if (music.volume > 0){
-                music.volume -= Time.deltaTime;
+                music.volume -= Time.deltaTime * 1.5f;
             }
             else{
                 music.volume = 0;
@@ -197,35 +205,74 @@ public class Menu : MonoBehaviour
         
 
         if (elNivel.getItem1()){
-            item1.style.backgroundImage = Background.FromTexture2D(apple);
+            if (page == 1)
+            {
+                item1.style.backgroundImage = Background.FromTexture2D(apple);
+            }
+            else if (page == 2)
+            {
+                item1.style.backgroundImage = Background.FromTexture2D(ribbon);
+            }
+            
         }
         else{
             item1.style.backgroundImage = Background.FromTexture2D(missing);
         }
 
         if (elNivel.getItem2()){
-            item2.style.backgroundImage = Background.FromTexture2D(ballon);
+            if (page == 1)
+            {
+                item2.style.backgroundImage = Background.FromTexture2D(ballon);
+            }
+            else if(page == 2)
+            {
+                item2.style.backgroundImage = Background.FromTexture2D(present);
+            }
+            
         }
         else{
             item2.style.backgroundImage = Background.FromTexture2D(missing);
         }
 
         if (elNivel.getItem3()){
-            item3.style.backgroundImage = Background.FromTexture2D(canvas);
+            if (page == 1)
+            {
+                item3.style.backgroundImage = Background.FromTexture2D(canvas);
+            }
+            else if (page == 2)
+            {
+                item3.style.backgroundImage = Background.FromTexture2D(spaceship);
+            }
+            
         }
         else{
             item3.style.backgroundImage = Background.FromTexture2D(missing);
         }
 
         if (elNivel.getItem4()){
-            item4.style.backgroundImage = Background.FromTexture2D(train);
+            if (page == 1)
+            {
+                item4.style.backgroundImage = Background.FromTexture2D(train);
+            }
+            else if (page == 2)
+            {
+                item4.style.backgroundImage = Background.FromTexture2D(parasol);
+            }
+            
         }
         else{
             item4.style.backgroundImage = Background.FromTexture2D(missing);
         }
 
         if (elNivel.getItem5()){
-            item5.style.backgroundImage = Background.FromTexture2D(fly);
+            if (page == 1)
+            {
+                item5.style.backgroundImage = Background.FromTexture2D(fly);
+            }
+            else if (page == 2)
+            {
+                item5.style.backgroundImage = Background.FromTexture2D(teddy);
+            }
         }
         else{
             item5.style.backgroundImage = Background.FromTexture2D(missing);

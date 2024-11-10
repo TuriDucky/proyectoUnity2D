@@ -10,6 +10,11 @@ using UnityEngine.VFX;
 public class Results : MonoBehaviour
 {
     UIDocument menu;
+
+    public AudioSource pointSFX;
+    public AudioSource rankSFX;
+    public AudioSource music;
+
     VisualElement results;
     VisualElement record;
     VisualElement rank;
@@ -36,8 +41,8 @@ public class Results : MonoBehaviour
     
     int levelTotal;
 
-    float Counter;
-    float Value = 1;
+    public float Counter; // Temporizador para el valor de abajo
+    public float Value; //Tiempo entre diferentes partes de la pantalla de resultados
 
     bool isGonnaPause;
     int cutscenePoint = -1;
@@ -54,6 +59,7 @@ public class Results : MonoBehaviour
     public static int levelTimeBonus;
     public static float levelTime;
     public static int levelRank;
+
     bool pauseEnded = false;
     void Start()
     {
@@ -104,6 +110,14 @@ public class Results : MonoBehaviour
         }
 
         if(isEnding){
+            if (music.volume > 0)
+            {
+                music.volume -= Time.deltaTime / 1.5f;
+            }
+            else
+            {
+                music.volume = 0;
+            }
             endCounter -= Time.deltaTime;
             if (endCounter <= 0){
                 SceneManager.LoadSceneAsync("Main Menu");
@@ -189,6 +203,7 @@ public class Results : MonoBehaviour
                     total.text = generateText(total, numbers, levelTotal);
                     break;
                 case 7:
+                    rankSFX.Play();
                     setRankImage();
                     rank.RemoveFromClassList("rank_start");
                     isGonnaPause = true;
@@ -244,13 +259,15 @@ public class Results : MonoBehaviour
     }
     
 
-    private string generateText(Label label, int theNumbers, int points){ 
+    private string generateText(Label label, int theNumbers, int points){
+        pointSFX.Play();
         String cadena = generateNumbers(theNumbers, points.ToString());
         Counter -= Time.deltaTime;
         if (Counter <= 0){
             numbers --;
             Counter = 0.2f;
             if (numbers < 0){
+                pointSFX.Stop();
                 numbers = 6;
                 isGonnaPause = true;
                 Counter = Value;

@@ -560,7 +560,7 @@ public class Player : MonoBehaviour
     {
         stompSFX.Stop();
         landSFX.Play();
-        Instantiate(LandPrefab, transform.position, Quaternion.identity);
+        GameObject land = Instantiate(LandPrefab, transform.position, Quaternion.identity);
         gameObject.layer = LayerMask.NameToLayer("Default");
     }
 
@@ -612,6 +612,7 @@ public class Player : MonoBehaviour
         downSlam = stomp;
         if (!stomp){
             gameObject.layer = LayerMask.NameToLayer("Default");
+            stompSFX.Stop();
         }
     }
 

@@ -97,8 +97,11 @@ public class Vultorturer : MonoBehaviour
                     else
                     {
                         isAttacking = true;
-                        attackSFX.Play();
                         attackTimeCounter = attackTimeValue / 3;
+                        if (!isDying)
+                        {
+                            attackSFX.Play();
+                        }
                     }
                 }
             }
@@ -223,6 +226,7 @@ public class Vultorturer : MonoBehaviour
             hit();
             if (!isStatic){
                 hitSFX.Play();
+                sr.color = redColor;
             }
         }
     }
@@ -241,6 +245,7 @@ public class Vultorturer : MonoBehaviour
     {
         rb2D.constraints = RigidbodyConstraints2D.None;
         if(!isDying){
+            deathSFX.Play();
             animator.SetBool("Fly", false);
             GameObject.Find("Level").GetComponent<Level>().addScore(pointValue);
         }
@@ -250,7 +255,7 @@ public class Vultorturer : MonoBehaviour
         rb2D.angularVelocity = Random.Range(-360, 360);
         bc2D.isTrigger = true;
         isDying = true;
-        deathSFX.Play();
+        
     }
 
     void OnBecameVisible()
