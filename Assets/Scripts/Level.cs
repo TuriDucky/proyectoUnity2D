@@ -8,7 +8,7 @@ using Image = UnityEngine.UI.Image;
 public class Level : MonoBehaviour
 {
     LevelData level;
-    public int levelNumber; // 0 = Tutorial, 1 = Level1
+    public int levelNumber; // 0 = Tutorial, 1 = Islands
 
     public TMP_Text timerUI;
     public TMP_Text pointsUI;
@@ -188,26 +188,64 @@ public class Level : MonoBehaviour
     public void setRank(){
         int totalScore = displayScore + timeBonus();
         Debug.Log(totalScore);
-        if (totalScore >= 100000){
-            Debug.Log("Rank S");
-            level.setRank(4);
+        if (levelNumber == 0)
+        {
+            if (totalScore >= 100000)
+            {
+                Debug.Log("Rank S");
+                level.setRank(4);
+            }
+            else if (totalScore >= 90000)
+            {
+                Debug.Log("Rank A");
+                level.setRank(3);
+            }
+            else if (totalScore >= 70000)
+            {
+                Debug.Log("Rank B");
+                level.setRank(2);
+            }
+            else if (totalScore >= 50000)
+            {
+                Debug.Log("Rank C");
+                level.setRank(1);
+            }
+            else
+            {
+                Debug.Log("Rank D");
+                level.setRank(0);
+            }
         }
-        else if (totalScore >= 90000){
-            Debug.Log("Rank A");
-            level.setRank(3);
+
+        if (levelNumber == 1)
+        {
+            if (totalScore >= 80000)
+            {
+                Debug.Log("Rank S");
+                level.setRank(4);
+            }
+            else if (totalScore >= 70000)
+            {
+                Debug.Log("Rank A");
+                level.setRank(3);
+            }
+            else if (totalScore >= 55000)
+            {
+                Debug.Log("Rank B");
+                level.setRank(2);
+            }
+            else if (totalScore >= 50000)
+            {
+                Debug.Log("Rank C");
+                level.setRank(1);
+            }
+            else
+            {
+                Debug.Log("Rank D");
+                level.setRank(0);
+            }
         }
-        else if (totalScore >= 70000){
-            Debug.Log("Rank B");
-            level.setRank(2);
-        }
-        else if (totalScore >= 50000){
-            Debug.Log("Rank C");
-            level.setRank(1);
-        }
-        else{
-            Debug.Log("Rank D");
-            level.setRank(0);
-        }
+
         Results.levelRank = level.getRank();
     }
 }

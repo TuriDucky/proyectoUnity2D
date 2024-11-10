@@ -102,12 +102,16 @@ public class Results : MonoBehaviour
         rotation ++;
         
         background.transform.rotation *= Quaternion.Euler(0f, 0f, 5 * Time.deltaTime);
-        
-        if (cutscenePoint >= 7){
-            if (Input.anyKey){
+
+        if (Input.anyKeyDown)
+        {
+            if (cutscenePoint >= 7)
+            {
                 transitionEnd();
             }
         }
+        
+
 
         if(isEnding){
             if (music.volume > 0)
@@ -277,8 +281,6 @@ public class Results : MonoBehaviour
 
         return cadena;
     }
-
-
 
     bool pause(){
         

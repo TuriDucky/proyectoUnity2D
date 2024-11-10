@@ -19,6 +19,7 @@ public class Menu : MonoBehaviour
     Button play;
     Button back;
     Button next;
+    Button delete;
     Label levelName;
     Label score;
     Label time;
@@ -71,6 +72,7 @@ public class Menu : MonoBehaviour
         play = root.Q<Button>("play");
         back = root.Q<Button>("back"); 
         next = root.Q<Button>("next");
+        delete = root.Q<Button>("exit");
 
         levelName = root.Q<Label>("levelName");
         score = root.Q<Label>("score"); 
@@ -110,14 +112,19 @@ public class Menu : MonoBehaviour
         back.RegisterCallback<ClickEvent>(flipPageBackwards);
         next.RegisterCallback<ClickEvent>(flipPageFordwards);
         play.RegisterCallback<ClickEvent>(transitionEnd);
+        delete.RegisterCallback<ClickEvent>(deleteSaves);
 
-        
-        
+
+
     }
 
     void Update(){
         background.transform.rotation *= Quaternion.Euler(0f, 0f, -5 * Time.deltaTime);
-        loadPage();
+        if (page != -1)
+        {
+            loadPage();
+        }
+        
         if (trasitionTimeCounter > 0){
             trasitionTimeCounter -= Time.deltaTime;
             if (music.volume > 0){
@@ -141,14 +148,31 @@ public class Menu : MonoBehaviour
         transition.AddToClassList("transition_start");
         trasitionTimeCounter = trasitionTimeValue;
     }
+    private void transitionEnd()
+    {
+        playSFX.Play();
+        transition.AddToClassList("transition_start");
+        trasitionTimeCounter = trasitionTimeValue;
+    }
 
     private void loadLevel(){
+        if (page == -1)
+        {
+            SceneManager.LoadSceneAsync("Main Menu");
+        }
         if (page == 1){
             SceneManager.LoadSceneAsync("0_Tutorial");
         }
         if (page == 2){
             SceneManager.LoadSceneAsync("1_Level");
         }
+    }
+
+    private void deleteSaves(ClickEvent clickEvent)
+    {
+        GameData.deleteSaves();
+        transitionEnd();
+        page = -1;
     }
 
     private void flipPageFordwards(ClickEvent clickEvent){
@@ -194,7 +218,24 @@ public class Menu : MonoBehaviour
     private void loadPage(){
       
         LevelData elNivel = checkPagelevel();
-        
+        float goldTrophy = 0;
+        float silverTrophy = 0;
+        float bronzeTrophy = 0;
+
+        if (elNivel.getName() == GameData.levelTutorialName)
+        {
+            goldTrophy = GameData.TutorialGold;
+            silverTrophy = GameData.TutorialSilver;
+            bronzeTrophy = GameData.TutorialBronze;
+        }
+        if (elNivel.getName() == GameData.level1Name)
+        {
+            goldTrophy = GameData.Level1Gold;
+            silverTrophy = GameData.Level1Silver;
+            bronzeTrophy = GameData.Level1Bronze;
+        }
+
+
         levelName.text = elNivel.getName();
         if (elNivel.getBestTime() > 0){
             score.text = calculateScore(elNivel);
@@ -290,22 +331,19 @@ public class Menu : MonoBehaviour
             time.text = formatTime(elNivel.getBestTime());
         }
         else{
-            time.text = "---";
+            time.text = "--:--:--";
         }
         
         if (elNivel.getBestTime() <= 0){
             trophy.style.backgroundImage = Background.FromTexture2D(missing);
         }
-        else if (elNivel.getBestTime() < GameData.TutorialGold){
-            Debug.Log("gold");
+        else if (elNivel.getBestTime() < goldTrophy){
             trophy.style.backgroundImage = Background.FromTexture2D(gold);
         }
-        else if (elNivel.getBestTime() < GameData.TutorialSilver){
-            Debug.Log("silver");
+        else if (elNivel.getBestTime() < silverTrophy){
             trophy.style.backgroundImage = Background.FromTexture2D(silver);
         }
-        else if (elNivel.getBestTime() < GameData.TutorialBronze){
-            Debug.Log("bronze");
+        else if (elNivel.getBestTime() < bronzeTrophy){
             trophy.style.backgroundImage = Background.FromTexture2D(bronze);
         }
         
@@ -335,6 +373,7 @@ public class Menu : MonoBehaviour
             
         }
     }
+
 
     private string calculateScore(LevelData level){
         int points = level.getScore();
